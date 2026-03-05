@@ -33,6 +33,16 @@ if (empty($secret) || !hash_equals($secret, $key)) {
 set_time_limit(120);
 header('Content-Type: application/json');
 
+// Debug: check clients data
+if (($_GET['action'] ?? '') === 'checkdata') {
+    require_once dirname(__DIR__) . '/src/config.php';
+    $clients = db()->query("SELECT id, name, email, source_page, product_id, status FROM clients ORDER BY id DESC LIMIT 20")->fetchAll();
+    $pages = db()->query("SELECT id, title, slug, product_id, status FROM landing_pages")->fetchAll();
+    $products = db()->query("SELECT id, name, slug, status FROM products")->fetchAll();
+    echo json_encode(['clients' => $clients, 'pages' => $pages, 'products' => $products], JSON_PRETTY_PRINT);
+    exit;
+}
+
 // Debug: lees mail log
 if (($_GET['action'] ?? '') === 'maillog') {
     $mailLog = $root . '/mail_debug.log';
