@@ -273,6 +273,36 @@ try {
         $migrations[] = "Admin user $adminEmail aangemaakt";
     }
 
+    // ── Seed data: product + landing page koppeling ────
+    // High Impact Doorbraak product
+    $prodExists = $pdo->query("SELECT id FROM products WHERE slug = 'hid'")->fetch();
+    if (!$prodExists) {
+        $pdo->exec("INSERT INTO products (name, slug, description, status) VALUES ('High Impact Doorbraak', 'hid', 'Premium coaching programma voor ondernemers', 'active')");
+        $migrations[] = "Product 'High Impact Doorbraak' aangemaakt";
+    }
+    $hidId = $pdo->query("SELECT id FROM products WHERE slug = 'hid'")->fetchColumn();
+
+    // Koppel doorbraak landing page aan HID product
+    if ($hidId) {
+        $lpExists = $pdo->query("SELECT id FROM landing_pages WHERE slug = 'doorbraak'")->fetch();
+        if (!$lpExists) {
+            $stmt = $pdo->prepare("INSERT INTO landing_pages (title, slug, url, product_id, status) VALUES (?, ?, ?, ?, 'live')");
+            $stmt->execute(['High Impact Doorbraak', 'doorbraak', 'https://flow.arjanburger.com/doorbraak/', $hidId]);
+            $migrations[] = "Landing page 'doorbraak' geregistreerd en gekoppeld aan HID";
+        } else {
+            // Zorg dat product_id gezet is
+            $pdo->prepare("UPDATE landing_pages SET product_id = ? WHERE slug = 'doorbraak' AND product_id IS NULL")->execute([$hidId]);
+        }
+
+        // Backfill: bestaande clients met source_page='doorbraak' koppelen aan HID product
+        $updated = $pdo->prepare("UPDATE clients SET product_id = ? WHERE source_page = 'doorbraak' AND product_id IS NULL");
+        $updated->execute([$hidId]);
+        $backfilled = $updated->rowCount();
+        if ($backfilled > 0) {
+            $migrations[] = "$backfilled leads gekoppeld aan HID product";
+        }
+    }
+
     $log[] = [
         'step' => 'database',
         'status' => 'ok',
