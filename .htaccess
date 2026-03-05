@@ -24,6 +24,11 @@ RewriteCond %{HTTP_HOST} ^flow\. [NC]
 RewriteRule ^deploy\.php$ flow/public/deploy.php [L,QSA]
 
 # ── os.arjanburger.com ───────────────────────────────────
+# OS statische bestanden: /assets/css/os.css → os/public/assets/css/os.css
+RewriteCond %{HTTP_HOST} !^flow\. [NC]
+RewriteCond %{DOCUMENT_ROOT}/os/public%{REQUEST_URI} -f
+RewriteRule ^(.*)$ os/public/$1 [L]
+
 # API requests → api/public/index.php
 RewriteRule ^api/public/(.*)$ api/public/index.php [L,QSA]
 
