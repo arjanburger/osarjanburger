@@ -129,8 +129,8 @@ try {
     </div>
     <div class="os-stat-card">
         <div class="os-stat-label">Leads</div>
-        <div class="os-stat-value"><?= number_format($totalForms) ?></div>
-        <div class="os-stat-sub">Formulieren</div>
+        <div class="os-stat-value"><?= number_format(count($leads)) ?></div>
+        <div class="os-stat-sub">Totaal</div>
     </div>
     <div class="os-stat-card">
         <div class="os-stat-label">Conversieratio</div>
