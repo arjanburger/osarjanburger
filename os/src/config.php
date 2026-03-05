@@ -3,6 +3,22 @@
  * ArjanBurger OS - Configuratie
  */
 
+// Laad .env als die bestaat (productie op Hostinger)
+$envFile = dirname(__DIR__, 2) . '/.env';
+if (file_exists($envFile) && !getenv('DB_NAME')) {
+    foreach (file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        $line = trim($line);
+        if ($line === '' || $line[0] === '#' || !str_contains($line, '=')) continue;
+        [$k, $v] = explode('=', $line, 2);
+        $k = trim($k);
+        $v = trim($v);
+        if ((str_starts_with($v, '"') && str_ends_with($v, '"')) || (str_starts_with($v, "'") && str_ends_with($v, "'"))) {
+            $v = substr($v, 1, -1);
+        }
+        putenv("$k=$v");
+    }
+}
+
 define('OS_NAME', 'ArjanBurger OS');
 define('OS_VERSION', '0.1.0');
 

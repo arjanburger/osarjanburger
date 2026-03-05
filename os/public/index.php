@@ -28,7 +28,6 @@ if ($uri !== '/' && is_file($publicFile)) {
 
 // Verify magic link token (2-staps login stap 2)
 if ($uri === '/verify') {
-    require_once $basePath . '/src/config.php';
     $token = $_GET['token'] ?? '';
     if ($token && verifyLoginToken($token)) {
         header('Location: ' . $urlPrefix . '/dashboard');
