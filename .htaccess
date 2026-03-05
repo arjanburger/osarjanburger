@@ -10,7 +10,13 @@ RewriteCond %{HTTP_HOST} ^flow\. [NC]
 RewriteCond %{DOCUMENT_ROOT}/flow/public%{REQUEST_URI} -f
 RewriteRule ^(.*)$ flow/public/$1 [L]
 
-# Landing pages: /doorbraak → flow/public/doorbraak/index.html
+# Landing pages: trailing slash redirect (zodat relatieve CSS/JS paden kloppen)
+RewriteCond %{HTTP_HOST} ^flow\. [NC]
+RewriteCond %{REQUEST_URI} !/$
+RewriteCond %{DOCUMENT_ROOT}/flow/public%{REQUEST_URI}/index.html -f
+RewriteRule ^(.*)$ /$1/ [R=301,L]
+
+# Landing pages: /doorbraak/ → flow/public/doorbraak/index.html
 RewriteCond %{HTTP_HOST} ^flow\. [NC]
 RewriteCond %{DOCUMENT_ROOT}/flow/public%{REQUEST_URI}/index.html -f
 RewriteRule ^(.*)$ flow/public/$1/index.html [L]
