@@ -53,6 +53,16 @@ if (preg_match('#^/clients/(\d+)$#', $uri, $m)) {
     $uri = '/clients/detail';
     $routeParam = $m[1];
 }
+// Page detail route: /pages/doorbraak
+if (preg_match('#^/pages/([a-z0-9_-]+)$#', $uri, $m)) {
+    $uri = '/pages/detail';
+    $routeParam = $m[1];
+}
+// Product detail route: /products/hid
+if (preg_match('#^/products/([a-z0-9_-]+)$#', $uri, $m)) {
+    $uri = '/products/detail';
+    $routeParam = $m[1];
+}
 
 switch ($uri) {
     case '/login':
@@ -70,6 +80,15 @@ switch ($uri) {
         break;
     case '/pages':
         require $basePath . '/views/pages.php';
+        break;
+    case '/pages/detail':
+        require $basePath . '/views/page-detail.php';
+        break;
+    case '/products':
+        require $basePath . '/views/products.php';
+        break;
+    case '/products/detail':
+        require $basePath . '/views/product-detail.php';
         break;
     case '/analytics':
         require $basePath . '/views/analytics.php';

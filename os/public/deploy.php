@@ -215,6 +215,16 @@ try {
             INDEX (canonical_id)
         ) ENGINE=InnoDB",
 
+        'products' => "CREATE TABLE products (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            slug VARCHAR(100) NOT NULL UNIQUE,
+            description TEXT,
+            status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB",
+
         'os_login_tokens' => "CREATE TABLE os_login_tokens (
             id INT AUTO_INCREMENT PRIMARY KEY,
             user_id INT NOT NULL,
@@ -240,6 +250,8 @@ try {
     $columnMigrations = [
         ['clients', 'visitor_id', "ALTER TABLE clients ADD COLUMN visitor_id VARCHAR(100) DEFAULT NULL"],
         ['clients', 'source_page', "ALTER TABLE clients ADD COLUMN source_page VARCHAR(100) DEFAULT NULL"],
+        ['clients', 'product_id', "ALTER TABLE clients ADD COLUMN product_id INT DEFAULT NULL"],
+        ['landing_pages', 'product_id', "ALTER TABLE landing_pages ADD COLUMN product_id INT DEFAULT NULL"],
     ];
 
     foreach ($columnMigrations as [$table, $column, $sql]) {

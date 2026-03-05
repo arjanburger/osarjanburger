@@ -131,16 +131,20 @@ function trackForm(array $data): void {
     $name = $fields['naam'] ?? $fields['name'] ?? $fields['Naam'] ?? $fields['Name'] ?? '';
 
     if ($email) {
+        // Zoek product_id via landing_page
+        $productId = null;
+        $lpStmt = db()->prepare("SELECT product_id FROM landing_pages WHERE slug = ? AND product_id IS NOT NULL LIMIT 1");
+        $lpStmt->execute([$pageSlug]);
+        $productId = $lpStmt->fetchColumn() ?: null;
+
         $existing = db()->prepare("SELECT id, visitor_id FROM clients WHERE email = ?");
         $existing->execute([$email]);
         $client = $existing->fetch();
 
         if ($client) {
-            // Update bestaande klant met visitor_id als die nog niet gezet is
-            if (empty($client['visitor_id'])) {
-                $upd = db()->prepare("UPDATE clients SET visitor_id = ?, source_page = COALESCE(source_page, ?) WHERE id = ?");
-                $upd->execute([$visitorId, $pageSlug, $client['id']]);
-            }
+            // Update bestaande klant
+            $upd = db()->prepare("UPDATE clients SET visitor_id = COALESCE(visitor_id, ?), source_page = COALESCE(source_page, ?), product_id = COALESCE(product_id, ?) WHERE id = ?");
+            $upd->execute([$visitorId, $pageSlug, $productId, $client['id']]);
             // Als klant een ander visitor_id had, koppel als alias
             if ($client['visitor_id'] && $client['visitor_id'] !== $visitorId) {
                 mergeVisitorIds($client['visitor_id'], $visitorId);
@@ -148,10 +152,10 @@ function trackForm(array $data): void {
         } else {
             // Nieuwe klant aanmaken
             $ins = db()->prepare("
-                INSERT INTO clients (name, email, visitor_id, source_page, status, created_at)
-                VALUES (?, ?, ?, ?, 'lead', NOW())
+                INSERT INTO clients (name, email, visitor_id, source_page, product_id, status, created_at)
+                VALUES (?, ?, ?, ?, ?, 'lead', NOW())
             ");
-            $ins->execute([$name, $email, $visitorId, $pageSlug]);
+            $ins->execute([$name, $email, $visitorId, $pageSlug, $productId]);
         }
     }
 
