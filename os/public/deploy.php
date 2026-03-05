@@ -33,6 +33,13 @@ if (empty($secret) || !hash_equals($secret, $key)) {
 set_time_limit(120);
 header('Content-Type: application/json');
 
+// Debug: lees mail log
+if (($_GET['action'] ?? '') === 'maillog') {
+    $mailLog = $root . '/mail_debug.log';
+    echo json_encode(['mail_log' => file_exists($mailLog) ? file_get_contents($mailLog) : 'no log file']);
+    exit;
+}
+
 $log = [];
 $hasError = false;
 
