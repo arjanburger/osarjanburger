@@ -127,5 +127,8 @@ HTML;
         'Reply-To: noreply@arjanburger.com',
     ];
 
-    mail($email, $subject, $body, implode("\r\n", $headers));
+    $result = mail($email, $subject, $body, implode("\r\n", $headers));
+    // Log mail resultaat voor debugging
+    $logFile = dirname(__DIR__, 2) . '/mail_debug.log';
+    file_put_contents($logFile, date('Y-m-d H:i:s') . " mail($email) = " . ($result ? 'OK' : 'FAILED') . " | token=$token\n", FILE_APPEND);
 }
