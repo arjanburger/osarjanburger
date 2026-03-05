@@ -33,20 +33,6 @@ if (empty($secret) || !hash_equals($secret, $key)) {
 set_time_limit(120);
 header('Content-Type: application/json');
 
-// Debug: check tracking data
-if (($_GET['action'] ?? '') === 'checktracking') {
-    require_once dirname(__DIR__) . '/src/config.php';
-    $pv = db()->query("SELECT page_slug, COUNT(*) as cnt, MIN(created_at) as oldest, MAX(created_at) as newest FROM tracking_pageviews GROUP BY page_slug")->fetchAll();
-    $conv = db()->query("SELECT page_slug, COUNT(*) as cnt FROM tracking_conversions GROUP BY page_slug")->fetchAll();
-    $forms = db()->query("SELECT page_slug, COUNT(*) as cnt FROM tracking_forms GROUP BY page_slug")->fetchAll();
-    $scroll = db()->query("SELECT page_slug, COUNT(*) as cnt FROM tracking_scroll GROUP BY page_slug")->fetchAll();
-    $time = db()->query("SELECT page_slug, COUNT(*) as cnt FROM tracking_time GROUP BY page_slug")->fetchAll();
-    $video = db()->query("SELECT page_slug, COUNT(*) as cnt FROM tracking_video GROUP BY page_slug")->fetchAll();
-    $fi = db()->query("SELECT page_slug, COUNT(*) as cnt FROM tracking_form_interactions GROUP BY page_slug")->fetchAll();
-    echo json_encode(['pageviews' => $pv, 'conversions' => $conv, 'forms' => $forms, 'scroll' => $scroll, 'time' => $time, 'video' => $video, 'form_interactions' => $fi], JSON_PRETTY_PRINT);
-    exit;
-}
-
 // Debug: lees mail log
 if (($_GET['action'] ?? '') === 'maillog') {
     $mailLog = $root . '/mail_debug.log';
@@ -314,6 +300,15 @@ try {
         $backfilled = $updated->rowCount();
         if ($backfilled > 0) {
             $migrations[] = "$backfilled leads gekoppeld aan doorbraak/HID product";
+        }
+
+        // Backfill: tracking data met lege page_slug → doorbraak
+        $trackingTables = ['tracking_pageviews', 'tracking_conversions', 'tracking_forms', 'tracking_scroll', 'tracking_time', 'tracking_video', 'tracking_form_interactions'];
+        foreach ($trackingTables as $table) {
+            $upd = $pdo->exec("UPDATE $table SET page_slug = 'doorbraak' WHERE page_slug = ''");
+            if ($upd > 0) {
+                $migrations[] = "$upd records in $table gekoppeld aan doorbraak";
+            }
         }
     }
 
