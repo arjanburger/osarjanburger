@@ -15,9 +15,9 @@ RewriteCond %{HTTP_HOST} ^flow\. [NC]
 RewriteCond %{DOCUMENT_ROOT}/flow/public%{REQUEST_URI}/index.html -f
 RewriteRule ^(.*)$ flow/public/$1/index.html [L]
 
-# Flow root
+# Flow root → redirect naar arjanburger.com
 RewriteCond %{HTTP_HOST} ^flow\. [NC]
-RewriteRule ^$ flow/public/index.html [L]
+RewriteRule ^$ https://arjanburger.com [R=301,L]
 
 # Flow deploy webhook
 RewriteCond %{HTTP_HOST} ^flow\. [NC]
@@ -38,4 +38,4 @@ RewriteRule ^$ os/public/index.php [L]
 RewriteCond %{HTTP_HOST} !^flow\. [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(login|dashboard|clients|pages|analytics|logout)(.*)$ os/public/index.php [L,QSA]
+RewriteRule ^(login|verify|dashboard|clients|pages|analytics|logout)(.*)$ os/public/index.php [L,QSA]

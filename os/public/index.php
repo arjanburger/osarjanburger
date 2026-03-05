@@ -26,6 +26,20 @@ if ($uri !== '/' && is_file($publicFile)) {
     return;
 }
 
+// Verify magic link token (2-staps login stap 2)
+if ($uri === '/verify') {
+    require_once $basePath . '/src/config.php';
+    $token = $_GET['token'] ?? '';
+    if ($token && verifyLoginToken($token)) {
+        header('Location: ' . $urlPrefix . '/dashboard');
+        exit;
+    }
+    // Token ongeldig of verlopen → terug naar login met foutmelding
+    $_SESSION['verify_error'] = 'Link is ongeldig of verlopen. Probeer opnieuw in te loggen.';
+    header('Location: ' . $urlPrefix . '/login');
+    exit;
+}
+
 // Auth check (behalve login pagina)
 if ($uri !== '/login' && !isAuthenticated()) {
     header('Location: ' . $urlPrefix . '/login');

@@ -194,6 +194,17 @@ try {
             UNIQUE KEY (alias_id),
             INDEX (canonical_id)
         ) ENGINE=InnoDB",
+
+        'os_login_tokens' => "CREATE TABLE os_login_tokens (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL,
+            token VARCHAR(255) NOT NULL UNIQUE,
+            expires_at DATETIME NOT NULL,
+            used TINYINT(1) NOT NULL DEFAULT 0,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_token (token),
+            FOREIGN KEY (user_id) REFERENCES os_users(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB",
     ];
 
     // Maak ontbrekende tabellen
@@ -217,6 +228,17 @@ try {
             $pdo->exec($sql);
             $migrations[] = "Kolom $table.$column toegevoegd";
         }
+    }
+
+    // ── Admin user aanmaken als die niet bestaat ───────
+    $adminEmail = 'arjan@burgerweb.nl';
+    $exists = $pdo->prepare('SELECT id FROM os_users WHERE email = ? LIMIT 1');
+    $exists->execute([$adminEmail]);
+    if (!$exists->fetch()) {
+        $hash = password_hash('ktv18#vp', PASSWORD_DEFAULT);
+        $stmt = $pdo->prepare('INSERT INTO os_users (name, email, password_hash) VALUES (?, ?, ?)');
+        $stmt->execute(['Arjan Burger', $adminEmail, $hash]);
+        $migrations[] = "Admin user $adminEmail aangemaakt";
     }
 
     $log[] = [

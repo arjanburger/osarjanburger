@@ -1,16 +1,24 @@
 <?php
 $error = null;
+$emailSent = false;
+
+// Check voor verify foutmelding (verlopen/ongeldige magic link)
+if (!empty($_SESSION['verify_error'])) {
+    $error = $_SESSION['verify_error'];
+    unset($_SESSION['verify_error']);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_once dirname(__DIR__) . '/src/config.php';
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
     if (attemptLogin($email, $password)) {
-        $prefix = defined('OS_URL_PREFIX') ? OS_URL_PREFIX : '';
-        header('Location: ' . $prefix . '/dashboard');
-        exit;
+        // Wachtwoord klopt → email verstuurd met magic link
+        $emailSent = true;
+    } else {
+        $error = 'Ongeldige inloggegevens.';
     }
-    $error = 'Ongeldige inloggegevens.';
 }
 ?>
 <!DOCTYPE html>
@@ -100,6 +108,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 0.85rem;
             margin-bottom: 1rem;
         }
+        .login-success {
+            text-align: center;
+        }
+        .login-success-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .login-success h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #e0e0e0;
+        }
+        .login-success p {
+            color: #888;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+        .login-success .email-highlight {
+            color: #c8a55c;
+            font-weight: 500;
+        }
+        .login-back {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: #666;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .login-back:hover { color: #c8a55c; }
     </style>
 </head>
 <body>
@@ -108,24 +148,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="login-logo-mark">AB</div>
             <span class="login-logo-text">OS</span>
         </div>
-        <p class="login-title">Log in op je dashboard</p>
 
-        <?php if ($error): ?>
-            <div class="login-error"><?= htmlspecialchars($error) ?></div>
+        <?php if ($emailSent): ?>
+            <div class="login-success">
+                <div class="login-success-icon">&#9993;</div>
+                <h2>Check je e-mail</h2>
+                <p>Er is een inloglink verstuurd naar<br><span class="email-highlight"><?= htmlspecialchars($_POST['email'] ?? '') ?></span></p>
+                <p>Klik op de link in de e-mail om in te loggen. De link is 15 minuten geldig.</p>
+                <a href="<?= defined('OS_URL_PREFIX') ? OS_URL_PREFIX : '' ?>/login" class="login-back">Opnieuw proberen</a>
+            </div>
+        <?php else: ?>
+            <p class="login-title">Log in op je dashboard</p>
+
+            <?php if ($error): ?>
+                <div class="login-error"><?= htmlspecialchars($error) ?></div>
+            <?php endif; ?>
+
+            <form method="POST" action="<?= defined('OS_URL_PREFIX') ? OS_URL_PREFIX : '' ?>/login">
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" name="email" required autofocus
+                           value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
+                </div>
+                <div class="form-group">
+                    <label for="password">Wachtwoord</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="login-btn">Inloggen</button>
+            </form>
         <?php endif; ?>
-
-        <form method="POST" action="<?= defined('OS_URL_PREFIX') ? OS_URL_PREFIX : '' ?>/login">
-            <div class="form-group">
-                <label for="email">E-mail</label>
-                <input type="email" id="email" name="email" required autofocus
-                       value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
-            </div>
-            <div class="form-group">
-                <label for="password">Wachtwoord</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit" class="login-btn">Inloggen</button>
-        </form>
     </div>
 </body>
 </html>
