@@ -4,21 +4,38 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
 
-# Statische bestanden in subdirectories direct serveren
-RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f
-RewriteRule ^ - [L]
+# ── flow.arjanburger.com ─────────────────────────────────
+# Statische bestanden: /js/engine.js → flow/public/js/engine.js
+RewriteCond %{HTTP_HOST} ^flow\. [NC]
+RewriteCond %{DOCUMENT_ROOT}/flow/public%{REQUEST_URI} -f
+RewriteRule ^(.*)$ flow/public/$1 [L]
 
+# Landing pages: /doorbraak → flow/public/doorbraak/index.html
+RewriteCond %{HTTP_HOST} ^flow\. [NC]
+RewriteCond %{DOCUMENT_ROOT}/flow/public%{REQUEST_URI}/index.html -f
+RewriteRule ^(.*)$ flow/public/$1/index.html [L]
+
+# Flow root
+RewriteCond %{HTTP_HOST} ^flow\. [NC]
+RewriteRule ^$ flow/public/index.html [L]
+
+# Flow deploy webhook
+RewriteCond %{HTTP_HOST} ^flow\. [NC]
+RewriteRule ^deploy\.php$ flow/public/deploy.php [L,QSA]
+
+# ── os.arjanburger.com ───────────────────────────────────
 # API requests → api/public/index.php
 RewriteRule ^api/public/(.*)$ api/public/index.php [L,QSA]
 
-# OS requests → os/public/index.php
+# OS requests via prefix
 RewriteRule ^os/public/(.*)$ os/public/index.php [L,QSA]
 
-# Root → redirect naar OS dashboard
+# Root → OS dashboard
+RewriteCond %{HTTP_HOST} !^flow\. [NC]
 RewriteRule ^$ os/public/index.php [L]
 
-# Clean URLs voor OS (als je direct op os.arjanburger.com zit)
-# /login, /dashboard, /clients etc → os/public/index.php
+# Clean URLs: /login, /dashboard, /clients etc → os/public/index.php
+RewriteCond %{HTTP_HOST} !^flow\. [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(login|dashboard|clients|pages|analytics|logout)(.*)$ os/public/index.php [L,QSA]
