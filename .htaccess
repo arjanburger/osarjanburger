@@ -1,0 +1,24 @@
+RewriteEngine On
+
+# Statische bestanden direct serveren
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Statische bestanden in subdirectories direct serveren
+RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f
+RewriteRule ^ - [L]
+
+# API requests → api/public/index.php
+RewriteRule ^api/public/(.*)$ api/public/index.php [L,QSA]
+
+# OS requests → os/public/index.php
+RewriteRule ^os/public/(.*)$ os/public/index.php [L,QSA]
+
+# Root → redirect naar OS dashboard
+RewriteRule ^$ os/public/index.php [L]
+
+# Clean URLs voor OS (als je direct op os.arjanburger.com zit)
+# /login, /dashboard, /clients etc → os/public/index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(login|dashboard|clients|pages|analytics|logout)(.*)$ os/public/index.php [L,QSA]
