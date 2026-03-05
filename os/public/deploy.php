@@ -304,12 +304,12 @@ try {
             $pdo->prepare("UPDATE landing_pages SET product_id = ? WHERE slug = 'doorbraak' AND product_id IS NULL")->execute([$hidId]);
         }
 
-        // Backfill: bestaande clients met source_page='doorbraak' koppelen aan HID product
-        $updated = $pdo->prepare("UPDATE clients SET product_id = ? WHERE source_page = 'doorbraak' AND product_id IS NULL");
+        // Backfill: alle bestaande clients zonder product/source koppelen aan doorbraak/HID
+        $updated = $pdo->prepare("UPDATE clients SET source_page = 'doorbraak', product_id = ? WHERE product_id IS NULL");
         $updated->execute([$hidId]);
         $backfilled = $updated->rowCount();
         if ($backfilled > 0) {
-            $migrations[] = "$backfilled leads gekoppeld aan HID product";
+            $migrations[] = "$backfilled leads gekoppeld aan doorbraak/HID product";
         }
     }
 
