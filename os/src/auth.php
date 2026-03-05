@@ -88,7 +88,7 @@ function verifyLoginToken(string $token): bool {
 }
 
 /**
- * Verstuur login email met magic link.
+ * Verstuur login email met magic link via Emailit API v2.
  */
 function sendLoginEmail(string $email, string $name, string $token): void {
     $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http')
@@ -96,8 +96,7 @@ function sendLoginEmail(string $email, string $name, string $token): void {
     $prefix = defined('OS_URL_PREFIX') ? OS_URL_PREFIX : '';
     $link = $baseUrl . $prefix . '/verify?token=' . $token;
 
-    $subject = 'Je inloglink — ArjanBurger OS';
-    $body = <<<HTML
+    $html = <<<HTML
 <!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"></head>
@@ -120,15 +119,30 @@ function sendLoginEmail(string $email, string $name, string $token): void {
 </html>
 HTML;
 
-    $headers = [
-        'MIME-Version: 1.0',
-        'Content-Type: text/html; charset=UTF-8',
-        'From: ArjanBurger OS <noreply@arjanburger.com>',
-        'Reply-To: noreply@arjanburger.com',
-    ];
+    $apiKey = getenv('EMAILIT_API_KEY') ?: '';
+    $payload = json_encode([
+        'from' => 'ArjanBurger OS <ab@arjanburger.com>',
+        'to' => $email,
+        'subject' => 'Je inloglink — ArjanBurger OS',
+        'html' => $html,
+    ]);
 
-    $result = mail($email, $subject, $body, implode("\r\n", $headers));
-    // Log mail resultaat voor debugging
+    $ch = curl_init('https://api.emailit.com/v2/emails');
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => $payload,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $apiKey,
+            'Content-Type: application/json',
+        ],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 10,
+    ]);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    // Log resultaat
     $logFile = dirname(__DIR__, 2) . '/mail_debug.log';
-    file_put_contents($logFile, date('Y-m-d H:i:s') . " mail($email) = " . ($result ? 'OK' : 'FAILED') . " | token=$token\n", FILE_APPEND);
+    file_put_contents($logFile, date('Y-m-d H:i:s') . " emailit($email) http=$httpCode response=$response\n", FILE_APPEND);
 }
