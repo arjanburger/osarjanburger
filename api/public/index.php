@@ -24,7 +24,7 @@ require_once dirname(__DIR__, 2) . '/os/src/config.php';
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 // Strip /api/public prefix voor lokale dev
-$uri = preg_replace('#^/api/public#', '', $uri);
+$uri = preg_replace('#^/api(/public)?#', '', $uri);
 $uri = rtrim($uri, '/') ?: '/';
 $method = $_SERVER['REQUEST_METHOD'];
 

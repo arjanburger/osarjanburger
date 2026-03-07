@@ -36,7 +36,8 @@ RewriteCond %{DOCUMENT_ROOT}/os/public%{REQUEST_URI} -f
 RewriteRule ^(.*)$ os/public/$1 [L]
 
 # API requests → api/public/index.php
-RewriteRule ^api/public/(.*)$ api/public/index.php [L,QSA]
+RewriteCond %{HTTP_HOST} !^flow\. [NC]
+RewriteRule ^api/(.*)$ api/public/index.php [L,QSA]
 
 # OS requests via prefix
 RewriteRule ^os/public/(.*)$ os/public/index.php [L,QSA]
