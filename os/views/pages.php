@@ -1,6 +1,11 @@
 <?php
 // Handle POST: page toevoegen
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['title']) && !empty($_POST['slug'])) {
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['_csrf'] ?? '')) {
+        http_response_code(403);
+        echo 'CSRF token mismatch';
+        exit;
+    }
     require_once dirname(__DIR__) . '/src/config.php';
     try {
         $stmt = db()->prepare("INSERT INTO landing_pages (title, slug, url, product_id, status) VALUES (?, ?, ?, ?, 'draft')");
@@ -88,7 +93,7 @@ foreach ($registeredPages as $pg) {
             <div class="os-page-card os-clickable-row" onclick="location.href='<?= $p ?>/pages/<?= htmlspecialchars($page['slug']) ?>'">
                 <div class="os-page-card-header">
                     <h3><?= htmlspecialchars($page['title']) ?></h3>
-                    <span class="os-badge os-badge-<?= $page['status'] ?>"><?= $page['status'] ?></span>
+                    <span class="os-badge os-badge-<?= htmlspecialchars($page['status']) ?>"><?= htmlspecialchars($page['status']) ?></span>
                 </div>
                 <div class="os-page-card-slug">/<?= htmlspecialchars($page['slug']) ?></div>
                 <div class="os-page-card-stats">
@@ -144,6 +149,7 @@ foreach ($registeredPages as $pg) {
     <div class="os-modal-content">
         <h2>Landing page registreren</h2>
         <form method="POST" action="<?= $p ?>/pages">
+            <input type="hidden" name="_csrf" value="<?= $_SESSION['csrf_token'] ?>">
             <div class="form-group">
                 <label>Titel</label>
                 <input type="text" name="title" required placeholder="High Impact Doorbraak">

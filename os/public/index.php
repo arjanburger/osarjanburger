@@ -4,7 +4,20 @@
  * Router voor het OS dashboard
  */
 
+ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_secure', 1);
+ini_set('session.cookie_samesite', 'Lax');
+ini_set('session.use_strict_mode', 1);
 session_start();
+
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 $basePath = dirname(__DIR__);
 require_once $basePath . '/src/auth.php';
@@ -17,8 +30,8 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = rtrim($uri, '/') ?: '/';
 
 // Statische bestanden doorlaten
-$publicFile = __DIR__ . $uri;
-if ($uri !== '/' && is_file($publicFile)) {
+$publicFile = realpath(__DIR__ . $uri);
+if ($publicFile && str_starts_with($publicFile, __DIR__) && is_file($publicFile)) {
     $ext = pathinfo($publicFile, PATHINFO_EXTENSION);
     $mimeTypes = ['css' => 'text/css', 'js' => 'application/javascript', 'png' => 'image/png', 'jpg' => 'image/jpeg', 'svg' => 'image/svg+xml', 'ico' => 'image/x-icon', 'woff2' => 'font/woff2'];
     if (isset($mimeTypes[$ext])) header('Content-Type: ' . $mimeTypes[$ext]);

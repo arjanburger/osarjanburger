@@ -43,7 +43,7 @@ foreach ($commands as $cmd) {
 
 http_response_code($hasError ? 500 : 200);
 echo json_encode([
-    'status' => $hasError ? 'ok' : 'ok',
+    'status' => $hasError ? 'error' : 'ok',
     'deployed_at' => date('Y-m-d H:i:s'),
     'output' => $output,
 ]);

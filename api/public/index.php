@@ -9,7 +9,9 @@ header('Content-Type: application/json');
 // CORS voor engine.js (cross-origin tracking)
 $allowedOrigins = ['https://flow.arjanburger.com', 'https://arjanburger.com', 'http://192.168.3.135:8093', 'https://hid.dev'];
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-if (in_array($origin, $allowedOrigins) || str_contains($origin, 'localhost') || str_contains($origin, '127.0.0.1')) {
+$parsedHost = parse_url($origin, PHP_URL_HOST) ?: '';
+$isLocal = in_array($parsedHost, ['localhost', '127.0.0.1']) || str_starts_with($parsedHost, '192.168.');
+if (in_array($origin, $allowedOrigins) || $isLocal) {
     header("Access-Control-Allow-Origin: $origin");
     header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
     header('Access-Control-Allow-Headers: Content-Type');

@@ -130,7 +130,7 @@ $eventConfig = [
                     <span><?= date('d M Y H:i', strtotime($client['created_at'])) ?></span>
                 </div>
             </div>
-            <span class="os-badge os-badge-<?= $client['status'] ?>"><?= $client['status'] ?></span>
+            <span class="os-badge os-badge-<?= htmlspecialchars($client['status']) ?>"><?= htmlspecialchars($client['status']) ?></span>
         </div>
     </div>
 </div>

@@ -33,26 +33,6 @@ if (empty($secret) || !hash_equals($secret, $key)) {
 set_time_limit(120);
 header('Content-Type: application/json');
 
-// Debug: lees mail log
-if (($_GET['action'] ?? '') === 'maillog') {
-    $mailLog = $root . '/mail_debug.log';
-    echo json_encode(['mail_log' => file_exists($mailLog) ? file_get_contents($mailLog) : 'no log file']);
-    exit;
-}
-
-// Voeg env var toe aan .env als die ontbreekt
-if (($_GET['action'] ?? '') === 'addenv' && !empty($_GET['k']) && !empty($_GET['v'])) {
-    $envContent = file_exists($envFile) ? file_get_contents($envFile) : '';
-    $envKey = $_GET['k'];
-    if (!str_contains($envContent, $envKey . '=')) {
-        file_put_contents($envFile, "\n$envKey=" . $_GET['v'] . "\n", FILE_APPEND);
-        echo json_encode(['status' => 'ok', 'added' => $envKey]);
-    } else {
-        echo json_encode(['status' => 'exists', 'key' => $envKey]);
-    }
-    exit;
-}
-
 $log = [];
 $hasError = false;
 

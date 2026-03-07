@@ -1,6 +1,11 @@
 <?php
 // Handle POST (product aanmaken) voor output
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['name']) && !empty($_POST['slug'])) {
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['_csrf'] ?? '')) {
+        http_response_code(403);
+        echo 'CSRF token mismatch';
+        exit;
+    }
     require_once dirname(__DIR__) . '/src/config.php';
     try {
         $stmt = db()->prepare("INSERT INTO products (name, slug, description) VALUES (?, ?, ?)");
@@ -83,7 +88,7 @@ try {
         <div class="os-page-card os-clickable-row" onclick="location.href='<?= $p ?>/products/<?= htmlspecialchars($prod['slug']) ?>'">
             <div class="os-page-card-header">
                 <h3><?= htmlspecialchars($prod['name']) ?></h3>
-                <span class="os-badge os-badge-<?= $prod['status'] ?>"><?= $prod['status'] ?></span>
+                <span class="os-badge os-badge-<?= htmlspecialchars($prod['status']) ?>"><?= htmlspecialchars($prod['status']) ?></span>
             </div>
             <?php if ($prod['description']): ?>
                 <p style="font-size:0.8rem;color:var(--os-text-muted);margin:0.5rem 0"><?= htmlspecialchars(mb_strimwidth($prod['description'], 0, 80, '...')) ?></p>
@@ -117,6 +122,7 @@ try {
     <div class="os-modal-content">
         <h2>Product toevoegen</h2>
         <form method="POST" action="<?= $p ?>/products">
+            <input type="hidden" name="_csrf" value="<?= $_SESSION['csrf_token'] ?>">
             <div class="form-group">
                 <label>Naam</label>
                 <input type="text" name="name" required placeholder="High Impact Doorbraak">

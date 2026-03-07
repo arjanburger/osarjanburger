@@ -80,6 +80,7 @@ function verifyLoginToken(string $token): bool {
     $upd = db()->prepare('UPDATE os_login_tokens SET used = 1 WHERE id = ?');
     $upd->execute([$row['token_id']]);
 
+    session_regenerate_id(true);
     $_SESSION['os_user_id'] = $row['user_id'];
     $_SESSION['os_user_email'] = $row['email'];
     $_SESSION['os_user_name'] = $row['name'];

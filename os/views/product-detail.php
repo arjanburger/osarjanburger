@@ -73,7 +73,7 @@ try {
     <div style="display:flex;align-items:center;gap:1rem">
         <a href="<?= $p ?>/products" class="os-btn os-btn-sm">&larr; Alle producten</a>
         <h2 style="font-size:1.1rem;font-weight:700;margin:0"><?= htmlspecialchars($product['name']) ?></h2>
-        <span class="os-badge os-badge-<?= $product['status'] ?>"><?= $product['status'] ?></span>
+        <span class="os-badge os-badge-<?= htmlspecialchars($product['status']) ?>"><?= htmlspecialchars($product['status']) ?></span>
     </div>
     <div class="os-period-filter">
         <?php foreach (['1' => 'Vandaag', '7' => '7d', '30' => '30d', '90' => '90d'] as $pVal => $pLabel): ?>
@@ -195,7 +195,7 @@ try {
                         <td><strong><?= htmlspecialchars($lead['name']) ?></strong></td>
                         <td><?= htmlspecialchars($lead['email'] ?? '—') ?></td>
                         <td><?php if ($lead['source_page']): ?><code><?= htmlspecialchars($lead['source_page']) ?></code><?php else: ?>—<?php endif; ?></td>
-                        <td><span class="os-badge os-badge-<?= $lead['status'] ?>"><?= $lead['status'] ?></span></td>
+                        <td><span class="os-badge os-badge-<?= htmlspecialchars($lead['status']) ?>"><?= htmlspecialchars($lead['status']) ?></span></td>
                         <td><?= date('d M Y', strtotime($lead['created_at'])) ?></td>
                     </tr>
                 <?php endforeach; ?>

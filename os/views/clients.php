@@ -48,7 +48,7 @@ try {
                         <td><?php if ($client['source_page']): ?><code><?= htmlspecialchars($client['source_page']) ?></code><?php else: ?>—<?php endif; ?></td>
                         <td><?= number_format($client['pageviews'] ?? 0) ?></td>
                         <td><?= $client['max_scroll'] ? $client['max_scroll'] . '%' : '—' ?></td>
-                        <td><span class="os-badge os-badge-<?= $client['status'] ?>"><?= htmlspecialchars($client['status']) ?></span></td>
+                        <td><span class="os-badge os-badge-<?= htmlspecialchars($client['status']) ?>"><?= htmlspecialchars($client['status']) ?></span></td>
                         <td><?= date('d M Y', strtotime($client['created_at'])) ?></td>
                     </tr>
                     <?php endforeach; ?>
@@ -64,6 +64,7 @@ try {
     <div class="os-modal-content">
         <h2>Klant toevoegen</h2>
         <form method="POST" action="/api/clients/create">
+            <input type="hidden" name="_csrf" value="<?= $_SESSION['csrf_token'] ?>">
             <div class="form-group">
                 <label>Naam</label>
                 <input type="text" name="name" required>
