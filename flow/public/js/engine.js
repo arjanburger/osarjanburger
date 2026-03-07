@@ -148,7 +148,7 @@
         if (navigator.sendBeacon) {
             navigator.sendBeacon(
                 `${API_BASE}/${endpoint}`,
-                new Blob([JSON.stringify(payload)], { type: 'application/json' })
+                new Blob([JSON.stringify(payload)], { type: 'text/plain' })
             );
         } else {
             fetch(`${API_BASE}/${endpoint}`, {

@@ -68,9 +68,6 @@ try {
         // ── Health check ─────────────────────────────────
         $uri === '/health' => respond(['status' => 'ok', 'version' => OS_VERSION]),
 
-        // Debug: recente pageviews
-        $uri === '/debug/recent' && $method === 'GET'
-            => respond(db()->query("SELECT id, page_slug, visitor_id, created_at FROM tracking_pageviews ORDER BY id DESC LIMIT 10")->fetchAll()),
 
         default => respond(['error' => 'Not found'], 404),
     };
