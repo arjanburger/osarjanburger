@@ -8,6 +8,11 @@ Landing page tracking platform met dashboard. Drie onderdelen: **OS** (dashboard
 > - [deploy.md](.claude/docs/deploy.md) — Deploy flow, migraties, lokaal draaien
 > - [architecture.md](.claude/docs/architecture.md) — Data flow, engine events, hiërarchie
 > - [rules.md](.claude/docs/rules.md) — Regels, richtlijnen, nieuwe features toevoegen
+>
+> Skills in `.claude/skills/`:
+> - [deploy-test.md](.claude/skills/deploy-test.md) — **Voer uit na elke deploy.** Test API, tracking, CORS, security headers, engine.js
+> - [security-audit.md](.claude/skills/security-audit.md) — Periodieke security check: secrets, CSRF, XSS, headers
+> - [add-landing-page.md](.claude/skills/add-landing-page.md) — Stappenplan voor nieuwe landing pages
 
 ## Tech Stack
 
@@ -100,7 +105,7 @@ Alle routes vereisen authenticatie behalve `/login` en `/verify`.
 - **clients** — Klanten/leads (email, visitor_id, source_page, product_id, status)
 
 ### Tracking tabellen (allemaal: page_slug, visitor_id, created_at)
-- **tracking_pageviews** — URL, referrer, UTM, screen, viewport
+- **tracking_pageviews** — URL, referrer, UTM, screen, viewport, user_agent, language, platform
 - **tracking_conversions** — action, label, url
 - **tracking_forms** — form_id, fields_json
 - **tracking_scroll** — depth (0-100)
@@ -154,8 +159,15 @@ php -S 127.0.0.1:18093 router.php
 2. Token generatie + email verzending via Emailit API
 3. Klik op link → `/verify?token=XXX` → sessie aangemaakt
 
-## Cross-Domain Tracking (3 lagen)
+## Cross-Domain & Cross-Device Tracking
 
+### Cross-domain (3 lagen)
 1. **Shared cookie** `_fvid` op `.arjanburger.com`
 2. **URL parameter** `?_fvid=xxx` voor externe domeinen
 3. **Server-side merge** via email bij form submit → `visitor_aliases`
+
+### Cross-device tracking
+- **User agent** opgeslagen bij elke pageview → browser/OS/device detectie via `parseUserAgent()` in `config.php`
+- **Email merge**: zelfde email op 2 devices → visitor_ids gelinkt in `visitor_aliases`
+- **Dashboard**: Apparaten/Browsers/OS panels op analytics + page-detail
+- **Client-detail**: device cards met "Cross-device" badge bij meerdere devices

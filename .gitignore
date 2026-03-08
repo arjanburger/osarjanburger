@@ -20,5 +20,5 @@ node_modules/
 *.log
 .run/
 
-# Claude
-.claude/
+# Claude (settings lokaal, docs+skills in git)
+.claude/settings.local.json
