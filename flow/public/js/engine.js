@@ -160,6 +160,27 @@
         }
     }
 
+    // ── Fingerprint hash ───────────────────────────────────────
+    function generateFingerprint() {
+        const components = [
+            screen.width + 'x' + screen.height,
+            screen.colorDepth,
+            new Date().getTimezoneOffset(),
+            navigator.language,
+            navigator.userAgentData?.platform || navigator.platform || '',
+            navigator.hardwareConcurrency || 0,
+            navigator.deviceMemory || 0,
+            navigator.maxTouchPoints || 0,
+        ];
+        // Simple djb2 hash → hex string
+        const str = components.join('|');
+        let hash = 5381;
+        for (let i = 0; i < str.length; i++) {
+            hash = ((hash << 5) + hash + str.charCodeAt(i)) >>> 0;
+        }
+        return hash.toString(16).padStart(8, '0');
+    }
+
     // ── Pageview tracking ────────────────────────────────────
     function trackPageview() {
         const utm = getUtmParams();
@@ -170,6 +191,7 @@
             user_agent: navigator.userAgent,
             language: navigator.language || '',
             platform: navigator.userAgentData?.platform || navigator.platform || '',
+            fingerprint: generateFingerprint(),
         });
     }
 

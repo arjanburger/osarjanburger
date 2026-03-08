@@ -105,7 +105,7 @@ Alle routes vereisen authenticatie behalve `/login` en `/verify`.
 - **clients** — Klanten/leads (email, visitor_id, source_page, product_id, status)
 
 ### Tracking tabellen (allemaal: page_slug, visitor_id, created_at)
-- **tracking_pageviews** — URL, referrer, UTM, screen, viewport, user_agent, language, platform
+- **tracking_pageviews** — URL, referrer, UTM, screen, viewport, user_agent, language, platform, ip_address, fingerprint
 - **tracking_conversions** — action, label, url
 - **tracking_forms** — form_id, fields_json
 - **tracking_scroll** — depth (0-100)

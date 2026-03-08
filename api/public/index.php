@@ -80,9 +80,15 @@ try {
 // ── Tracking handlers ────────────────────────────────────
 
 function trackPageview(array $data): void {
+    // IP-adres: pak het echte IP achter proxy/CDN
+    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['HTTP_X_REAL_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? null;
+    if ($ip && str_contains($ip, ',')) {
+        $ip = trim(explode(',', $ip)[0]); // Eerste IP in chain
+    }
+
     $stmt = db()->prepare("
-        INSERT INTO tracking_pageviews (page_slug, visitor_id, url, referrer, utm_json, screen, viewport, user_agent, language, platform, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        INSERT INTO tracking_pageviews (page_slug, visitor_id, url, referrer, utm_json, screen, viewport, user_agent, language, platform, ip_address, fingerprint, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     ");
     $stmt->execute([
         $data['page'] ?? '',
@@ -95,6 +101,8 @@ function trackPageview(array $data): void {
         $data['user_agent'] ?? ($_SERVER['HTTP_USER_AGENT'] ?? null),
         $data['language'] ?? null,
         $data['platform'] ?? null,
+        $ip,
+        $data['fingerprint'] ?? null,
     ]);
     respond(['ok' => true]);
 }

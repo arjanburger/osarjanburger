@@ -235,6 +235,8 @@ try {
         ['tracking_pageviews', 'user_agent', "ALTER TABLE tracking_pageviews ADD COLUMN user_agent VARCHAR(500) DEFAULT NULL"],
         ['tracking_pageviews', 'language', "ALTER TABLE tracking_pageviews ADD COLUMN language VARCHAR(20) DEFAULT NULL"],
         ['tracking_pageviews', 'platform', "ALTER TABLE tracking_pageviews ADD COLUMN platform VARCHAR(50) DEFAULT NULL"],
+        ['tracking_pageviews', 'ip_address', "ALTER TABLE tracking_pageviews ADD COLUMN ip_address VARCHAR(45) DEFAULT NULL"],
+        ['tracking_pageviews', 'fingerprint', "ALTER TABLE tracking_pageviews ADD COLUMN fingerprint VARCHAR(64) DEFAULT NULL"],
     ];
 
     foreach ($columnMigrations as [$table, $column, $sql]) {
