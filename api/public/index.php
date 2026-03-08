@@ -81,8 +81,8 @@ try {
 
 function trackPageview(array $data): void {
     $stmt = db()->prepare("
-        INSERT INTO tracking_pageviews (page_slug, visitor_id, url, referrer, utm_json, screen, viewport, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+        INSERT INTO tracking_pageviews (page_slug, visitor_id, url, referrer, utm_json, screen, viewport, user_agent, language, platform, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     ");
     $stmt->execute([
         $data['page'] ?? '',
@@ -92,6 +92,9 @@ function trackPageview(array $data): void {
         isset($data['utm']) ? json_encode($data['utm']) : null,
         $data['screen'] ?? null,
         $data['viewport'] ?? null,
+        $data['user_agent'] ?? ($_SERVER['HTTP_USER_AGENT'] ?? null),
+        $data['language'] ?? null,
+        $data['platform'] ?? null,
     ]);
     respond(['ok' => true]);
 }

@@ -83,6 +83,26 @@ try {
     $formAbandons = db()->query("SELECT COUNT(*) FROM tracking_form_interactions WHERE event = 'abandon' AND $periodSql $filterSql")->fetchColumn();
     $formAbandonRate = $formStarts > 0 ? round(($formAbandons / $formStarts) * 100, 1) : 0;
 
+    // Browser/OS breakdown (via user_agent)
+    $uaRows = db()->query("
+        SELECT user_agent FROM tracking_pageviews
+        WHERE user_agent IS NOT NULL AND user_agent != '' AND $periodSql $filterSql
+    ")->fetchAll(PDO::FETCH_COLUMN);
+    $browserCounts = [];
+    $osCounts = [];
+    $uaDeviceCounts = [];
+    foreach ($uaRows as $ua) {
+        $parsed = parseUserAgent($ua);
+        $browserCounts[$parsed['browser']] = ($browserCounts[$parsed['browser']] ?? 0) + 1;
+        $osCounts[$parsed['os']] = ($osCounts[$parsed['os']] ?? 0) + 1;
+        $uaDeviceCounts[$parsed['device']] = ($uaDeviceCounts[$parsed['device']] ?? 0) + 1;
+    }
+    arsort($browserCounts);
+    arsort($osCounts);
+    arsort($uaDeviceCounts);
+    $browserTotal = max(array_sum($browserCounts), 1);
+    $osTotal = max(array_sum($osCounts), 1);
+
 } catch (PDOException $e) {
     $landingPage = null; $dailyViews = []; $totalViews = 0; $totalConversions = 0; $totalForms = 0;
     $conversionRate = 0; $avgTime = 0; $funnelScroll50 = 0; $funnelVideoPlay = 0; $formStarts = 0;
@@ -90,6 +110,7 @@ try {
     $videoPlays = 0; $videoCompletes = 0; $videoAvgWatch = 0; $videoCompletionRate = 0; $videoProgress = [];
     $ctaData = []; $referrerData = []; $referrerTotal = 1; $deviceData = []; $deviceTotal = 1;
     $formAbandons = 0; $formAbandonRate = 0;
+    $browserCounts = []; $osCounts = []; $uaDeviceCounts = []; $browserTotal = 1; $osTotal = 1;
 }
 ?>
 
@@ -346,19 +367,68 @@ try {
     <div class="os-panel">
         <div class="os-panel-header"><h2>Apparaten</h2></div>
         <div class="os-panel-body">
-            <?php if (empty($deviceData)): ?>
+            <?php
+            $devSource = !empty($uaDeviceCounts) ? $uaDeviceCounts : array_column($deviceData, 'count', 'device');
+            $devTotal = max(array_sum($devSource), 1);
+            $deviceColors = ['Desktop' => '#90ed7d', 'Tablet' => '#7cb5ec', 'Mobiel' => '#f7a35c'];
+            if (empty($devSource)): ?>
                 <p class="os-empty">Nog geen data.</p>
             <?php else:
-                $deviceColors = ['Desktop' => '#90ed7d', 'Tablet' => '#7cb5ec', 'Mobiel' => '#f7a35c'];
-                foreach ($deviceData as $dev):
-                    $pct = round(($dev['count'] / $deviceTotal) * 100);
+                foreach ($devSource as $devName => $count):
+                    $pct = round(($count / $devTotal) * 100);
             ?>
             <div class="os-funnel-step">
                 <div class="os-funnel-label">
-                    <span><?= $dev['device'] ?></span>
-                    <span class="os-funnel-count"><?= number_format($dev['count']) ?> <span class="os-text-muted">(<?= $pct ?>%)</span></span>
+                    <span><?= htmlspecialchars($devName) ?></span>
+                    <span class="os-funnel-count"><?= number_format($count) ?> <span class="os-text-muted">(<?= $pct ?>%)</span></span>
                 </div>
-                <div class="os-bar-track"><div class="os-bar-fill" style="width:<?= $pct ?>%;background:<?= $deviceColors[$dev['device']] ?? 'var(--os-accent)' ?>"></div></div>
+                <div class="os-bar-track"><div class="os-bar-fill" style="width:<?= $pct ?>%;background:<?= $deviceColors[$devName] ?? 'var(--os-accent)' ?>"></div></div>
+            </div>
+            <?php endforeach; endif; ?>
+        </div>
+    </div>
+</div>
+
+<div class="os-grid-2">
+    <!-- Browsers -->
+    <div class="os-panel">
+        <div class="os-panel-header"><h2>Browsers</h2></div>
+        <div class="os-panel-body">
+            <?php if (empty($browserCounts)): ?>
+                <p class="os-empty">Nog geen browser data.</p>
+            <?php else:
+                $browserColors = ['Chrome' => '#4285f4', 'Safari' => '#007aff', 'Firefox' => '#ff7139', 'Edge' => '#0078d7', 'Opera' => '#ff1b2d', 'Overig' => '#888'];
+                foreach (array_slice($browserCounts, 0, 6, true) as $bName => $count):
+                    $pct = round(($count / $browserTotal) * 100);
+            ?>
+            <div class="os-funnel-step">
+                <div class="os-funnel-label">
+                    <span><?= htmlspecialchars($bName) ?></span>
+                    <span class="os-funnel-count"><?= number_format($count) ?> <span class="os-text-muted">(<?= $pct ?>%)</span></span>
+                </div>
+                <div class="os-bar-track"><div class="os-bar-fill" style="width:<?= $pct ?>%;background:<?= $browserColors[$bName] ?? '#888' ?>"></div></div>
+            </div>
+            <?php endforeach; endif; ?>
+        </div>
+    </div>
+
+    <!-- Besturingssystemen -->
+    <div class="os-panel">
+        <div class="os-panel-header"><h2>Besturingssystemen</h2></div>
+        <div class="os-panel-body">
+            <?php if (empty($osCounts)): ?>
+                <p class="os-empty">Nog geen OS data.</p>
+            <?php else:
+                $osColors = ['Windows' => '#0078d7', 'macOS' => '#555', 'iOS' => '#007aff', 'iPadOS' => '#5856d6', 'Android' => '#3ddc84', 'Linux' => '#f7a35c', 'Overig' => '#888'];
+                foreach (array_slice($osCounts, 0, 6, true) as $osName => $count):
+                    $pct = round(($count / $osTotal) * 100);
+            ?>
+            <div class="os-funnel-step">
+                <div class="os-funnel-label">
+                    <span><?= htmlspecialchars($osName) ?></span>
+                    <span class="os-funnel-count"><?= number_format($count) ?> <span class="os-text-muted">(<?= $pct ?>%)</span></span>
+                </div>
+                <div class="os-bar-track"><div class="os-bar-fill" style="width:<?= $pct ?>%;background:<?= $osColors[$osName] ?? '#888' ?>"></div></div>
             </div>
             <?php endforeach; endif; ?>
         </div>

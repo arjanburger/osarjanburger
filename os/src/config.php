@@ -36,6 +36,35 @@ define('FLOW_DOMAIN', getenv('FLOW_DOMAIN') ?: 'http://127.0.0.1:18093/flow/publ
 // Deploy
 define('DEPLOY_SECRET', getenv('DEPLOY_SECRET') ?: '');
 
+/**
+ * Parse user agent string into browser, OS, and device type.
+ */
+function parseUserAgent(string $ua): array {
+    $browser = 'Overig';
+    $os = 'Overig';
+    $device = 'Desktop';
+
+    // Browser (order matters: Edge/Opera before Chrome, Chrome before Safari)
+    if (preg_match('/Edg[e\/]/i', $ua)) $browser = 'Edge';
+    elseif (preg_match('/OPR|Opera/i', $ua)) $browser = 'Opera';
+    elseif (preg_match('/Chrome/i', $ua) && !preg_match('/Edg/i', $ua)) $browser = 'Chrome';
+    elseif (preg_match('/Safari/i', $ua) && !preg_match('/Chrome|Chromium/i', $ua)) $browser = 'Safari';
+    elseif (preg_match('/Firefox/i', $ua)) $browser = 'Firefox';
+
+    // OS + device
+    if (preg_match('/iPhone/i', $ua)) { $os = 'iOS'; $device = 'Mobiel'; }
+    elseif (preg_match('/iPad/i', $ua)) { $os = 'iPadOS'; $device = 'Tablet'; }
+    elseif (preg_match('/Android/i', $ua)) {
+        $os = 'Android';
+        $device = preg_match('/Mobile/i', $ua) ? 'Mobiel' : 'Tablet';
+    }
+    elseif (preg_match('/Windows/i', $ua)) $os = 'Windows';
+    elseif (preg_match('/Macintosh/i', $ua)) $os = 'macOS';
+    elseif (preg_match('/Linux/i', $ua)) $os = 'Linux';
+
+    return compact('browser', 'os', 'device');
+}
+
 function db(): PDO {
     static $pdo = null;
     if ($pdo === null) {

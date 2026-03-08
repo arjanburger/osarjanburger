@@ -94,8 +94,28 @@ try {
     $formData->execute($visitorIds);
     $forms = $formData->fetchAll();
 
+    // Devices van deze klant (uit user_agent op pageviews)
+    $deviceStmt = db()->prepare("
+        SELECT user_agent, viewport, created_at FROM tracking_pageviews
+        WHERE visitor_id IN ($placeholders) AND user_agent IS NOT NULL AND user_agent != ''
+        ORDER BY created_at DESC
+    ");
+    $deviceStmt->execute($visitorIds);
+    $clientDevices = [];
+    $clientDeviceRows = $deviceStmt->fetchAll();
+    foreach ($clientDeviceRows as $dr) {
+        $parsed = parseUserAgent($dr['user_agent']);
+        $key = $parsed['device'] . ' — ' . $parsed['browser'] . ' op ' . $parsed['os'];
+        if (!isset($clientDevices[$key])) {
+            $clientDevices[$key] = ['count' => 0, 'device' => $parsed['device'], 'browser' => $parsed['browser'], 'os' => $parsed['os'], 'last_seen' => $dr['created_at']];
+        }
+        $clientDevices[$key]['count']++;
+    }
+    $isMultiDevice = count($clientDevices) > 1;
+
 } catch (PDOException $e) {
     $events = []; $totalSeconds = 0; $maxScrollDepth = 0; $totalVideoSeconds = 0; $forms = [];
+    $clientDevices = []; $isMultiDevice = false;
 }
 
 $eventConfig = [
@@ -158,6 +178,28 @@ $eventConfig = [
         <div class="os-stat-sub">Totaal</div>
     </div>
 </div>
+
+<?php if (!empty($clientDevices)): ?>
+<!-- Apparaten van deze klant -->
+<div class="os-panel">
+    <div class="os-panel-header">
+        <h2>Apparaten<?php if ($isMultiDevice): ?> <span class="os-badge os-badge-active" style="font-size:0.65rem;margin-left:0.5rem">Cross-device</span><?php endif; ?></h2>
+    </div>
+    <div class="os-panel-body">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0.75rem">
+        <?php
+        $deviceColors = ['Desktop' => '#90ed7d', 'Tablet' => '#7cb5ec', 'Mobiel' => '#f7a35c'];
+        foreach ($clientDevices as $label => $info): ?>
+            <div style="background:var(--os-bg-dark);border-radius:8px;padding:0.75rem;border-left:3px solid <?= $deviceColors[$info['device']] ?? 'var(--os-accent)' ?>">
+                <div style="font-weight:600;font-size:0.85rem;margin-bottom:0.25rem"><?= htmlspecialchars($info['device']) ?></div>
+                <div style="font-size:0.8rem;color:var(--os-text-muted)"><?= htmlspecialchars($info['browser']) ?> op <?= htmlspecialchars($info['os']) ?></div>
+                <div style="font-size:0.75rem;color:var(--os-text-muted);margin-top:0.25rem"><?= $info['count'] ?> pageviews &middot; Laatst: <?= date('d M H:i', strtotime($info['last_seen'])) ?></div>
+            </div>
+        <?php endforeach; ?>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 
 <div class="os-grid-2">
     <!-- Journey timeline -->

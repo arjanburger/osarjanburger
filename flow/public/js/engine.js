@@ -167,6 +167,9 @@
             utm: utm,
             screen: `${screen.width}x${screen.height}`,
             viewport: `${window.innerWidth}x${window.innerHeight}`,
+            user_agent: navigator.userAgent,
+            language: navigator.language || '',
+            platform: navigator.userAgentData?.platform || navigator.platform || '',
         });
     }
 

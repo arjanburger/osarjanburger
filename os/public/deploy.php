@@ -232,6 +232,9 @@ try {
         ['clients', 'source_page', "ALTER TABLE clients ADD COLUMN source_page VARCHAR(100) DEFAULT NULL"],
         ['clients', 'product_id', "ALTER TABLE clients ADD COLUMN product_id INT DEFAULT NULL"],
         ['landing_pages', 'product_id', "ALTER TABLE landing_pages ADD COLUMN product_id INT DEFAULT NULL"],
+        ['tracking_pageviews', 'user_agent', "ALTER TABLE tracking_pageviews ADD COLUMN user_agent VARCHAR(500) DEFAULT NULL"],
+        ['tracking_pageviews', 'language', "ALTER TABLE tracking_pageviews ADD COLUMN language VARCHAR(20) DEFAULT NULL"],
+        ['tracking_pageviews', 'platform', "ALTER TABLE tracking_pageviews ADD COLUMN platform VARCHAR(50) DEFAULT NULL"],
     ];
 
     foreach ($columnMigrations as [$table, $column, $sql]) {
