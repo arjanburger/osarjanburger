@@ -10,7 +10,7 @@
     --os-text-muted: #888;
     --os-text-dim: #555;
     --os-accent: #C9A84C;
-    --os-accent-hover: #D4B65E;
+    --os-accent-hover: #B8963E;
     --os-accent-dim: rgba(201, 168, 76, 0.15);
     --os-navy: #1A3550;
     --os-success: #4caf50;
@@ -19,12 +19,15 @@
     --os-radius: 8px;
     --os-radius-lg: 12px;
     --os-sidebar-width: 240px;
+    --os-font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    --os-font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --os-font-label: 'Montserrat', 'Inter', sans-serif;
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: 'Inter', -apple-system, sans-serif;
+    font-family: var(--os-font-body);
     background: var(--os-bg);
     color: var(--os-text);
     line-height: 1.5;
@@ -70,8 +73,10 @@ body {
 }
 
 .os-logo-text {
-    font-weight: 600;
-    font-size: 1rem;
+    font-family: var(--os-font-label);
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.15em;
 }
 
 .os-version {
@@ -158,8 +163,9 @@ body {
 }
 
 .os-header h1 {
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-family: var(--os-font-heading);
+    font-size: 1.4rem;
+    font-weight: 500;
 }
 
 .os-content {
@@ -182,10 +188,11 @@ body {
 }
 
 .os-stat-label {
-    font-size: 0.75rem;
+    font-family: var(--os-font-label);
+    font-size: 0.7rem;
     color: var(--os-text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.12em;
     margin-bottom: 0.5rem;
 }
 
@@ -209,8 +216,9 @@ body {
 }
 
 .os-panel-header h2 {
-    font-size: 0.95rem;
-    font-weight: 600;
+    font-family: var(--os-font-heading);
+    font-size: 1rem;
+    font-weight: 500;
 }
 
 .os-panel-body { padding: 1.25rem; }
@@ -246,9 +254,11 @@ body {
     display: inline-block;
     padding: 0.2rem 0.6rem;
     border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 600;
+    font-family: var(--os-font-label);
+    font-size: 0.65rem;
+    font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.06em;
 }
 
 .os-badge-active, .os-badge-live { background: rgba(76, 175, 80, 0.15); color: var(--os-success); }
@@ -275,7 +285,7 @@ body {
 }
 
 .os-btn:hover { background: var(--os-surface-hover); border-color: var(--os-border-light); }
-.os-btn-primary { background: var(--os-accent); color: var(--os-bg); border-color: var(--os-accent); }
+.os-btn-primary { background: var(--os-accent); color: var(--os-bg); border-color: var(--os-accent); font-family: var(--os-font-label); font-weight: 700; letter-spacing: 0.04em; }
 .os-btn-primary:hover { background: var(--os-accent-hover); }
 .os-btn-sm { padding: 0.35rem 0.7rem; font-size: 0.8rem; }
 

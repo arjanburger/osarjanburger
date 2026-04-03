@@ -29,11 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Inloggen — <?= OS_NAME ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: #0a0a0a;
             color: #e0e0e0;
             min-height: 100vh;
@@ -70,10 +70,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border: 1px solid rgba(201, 168, 76, 0.2);
             letter-spacing: 0.05em;
         }
-        .login-logo-text { font-weight: 600; font-size: 1.25rem; }
-        .login-title { font-size: 1.1rem; font-weight: 500; margin-bottom: 1.5rem; text-align: center; color: #999; }
+        .login-logo-text { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: 0.15em; }
+        .login-title { font-family: 'Playfair Display', Georgia, serif; font-size: 1.2rem; font-weight: 400; font-style: italic; margin-bottom: 1.5rem; text-align: center; color: #999; }
         .form-group { margin-bottom: 1.25rem; }
-        .form-group label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 0.4rem; font-weight: 500; }
+        .form-group label { display: block; font-family: 'Montserrat', sans-serif; font-size: 0.7rem; color: #888; margin-bottom: 0.4rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
         .form-group input {
             width: 100%;
             padding: 0.75rem 1rem;
@@ -92,15 +92,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: #C9A84C;
             color: #0a0a0a;
             border: none;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            font-family: inherit;
+            border-radius: 6px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
             cursor: pointer;
             transition: background 0.2s;
             margin-top: 0.5rem;
         }
-        .login-btn:hover { background: #D4B65E; }
+        .login-btn:hover { background: #B8963E; }
         .login-error {
             background: rgba(220, 50, 50, 0.1);
             border: 1px solid rgba(220, 50, 50, 0.3);
