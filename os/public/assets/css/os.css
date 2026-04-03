@@ -478,49 +478,46 @@ body {
     font-weight: 400;
 }
 
-/* Visual funnel (trapezoid shape) */
-.os-funnel-shape {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0.25rem 0;
+/* SVG Funnel */
+.os-funnel-svg {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
 }
 
-.os-funnel-slice {
-    width: 100%;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    position: relative;
-    transition: filter 0.2s;
+.os-funnel-poly {
+    transition: filter 0.25s ease;
     cursor: default;
 }
 
-.os-funnel-slice:hover {
+.os-funnel-poly:hover {
     filter: brightness(1.15);
 }
 
-.os-funnel-slice-label {
-    font-size: 0.8rem;
+.os-funnel-svg-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
     font-weight: 600;
-    color: #0a0a0a;
-    text-shadow: 0 1px 2px rgba(255,255,255,0.2);
+    fill: rgba(255, 255, 255, 0.92);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    pointer-events: none;
 }
 
-.os-funnel-slice-value {
-    font-size: 0.9rem;
+.os-funnel-svg-value {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
     font-weight: 700;
-    color: #0a0a0a;
-    font-variant-numeric: tabular-nums;
-    text-shadow: 0 1px 2px rgba(255,255,255,0.2);
+    fill: #fff;
+    pointer-events: none;
 }
 
-.os-funnel-slice-drop {
-    font-size: 0.65rem;
+.os-funnel-svg-drop {
+    font-size: 10px;
     font-weight: 600;
-    color: rgba(180, 40, 40, 0.85);
+    fill: rgba(255, 200, 200, 0.9);
 }
 
 .os-bar-track {

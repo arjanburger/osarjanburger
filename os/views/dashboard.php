@@ -106,39 +106,49 @@ try {
         <div class="os-panel-header"><h2>Funnel vandaag</h2></div>
         <div class="os-panel-body">
             <?php
-            $funnelMax = max($fViews, 1);
             $funnelSteps = [
-                ['label' => 'Pageviews', 'value' => $fViews, 'color' => '#C9A84C'],
-                ['label' => 'Scroll 50%+', 'value' => $fScroll, 'color' => '#7cb5ec'],
-                ['label' => 'CTA click', 'value' => $fCta, 'color' => '#90ed7d'],
-                ['label' => 'Formulier', 'value' => $fForm, 'color' => '#f7a35c'],
+                ['label' => 'Pageviews', 'value' => $fViews, 'fill' => '#C9A84C', 'fill2' => '#A8893A'],
+                ['label' => 'Scroll 50%+', 'value' => $fScroll, 'fill' => '#5B9FCC', 'fill2' => '#4A86AD'],
+                ['label' => 'CTA click', 'value' => $fCta, 'fill' => '#6AB06A', 'fill2' => '#569156'],
+                ['label' => 'Formulier', 'value' => $fForm, 'fill' => '#D4845C', 'fill2' => '#B8704D'],
             ];
             $n = count($funnelSteps);
-            // Bereken top/bottom breedte per tier (100% bovenaan → 15% onderaan)
+            $svgW = 400;
+            $svgH = 300;
+            $tierH = $svgH / $n;
+            $topMin = 30;  // smalste punt (onderaan laatste tier)
             $widths = [];
-            for ($i = 0; $i < $n; $i++) {
-                $widths[] = 100 - ($i * (85 / $n));
+            for ($i = 0; $i <= $n; $i++) {
+                $widths[] = $svgW - (($svgW - $topMin) * ($i / $n));
             }
-            $widths[] = 15; // bottom van laatste tier
             ?>
-            <div class="os-funnel-shape">
+            <svg class="os-funnel-svg" viewBox="0 0 <?= $svgW ?> <?= $svgH ?>" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                    <?php foreach ($funnelSteps as $i => $step): ?>
+                    <linearGradient id="fg<?= $i ?>" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="<?= $step['fill'] ?>"/>
+                        <stop offset="100%" stop-color="<?= $step['fill2'] ?>"/>
+                    </linearGradient>
+                    <?php endforeach; ?>
+                </defs>
                 <?php foreach ($funnelSteps as $i => $step):
-                    $topW = $widths[$i];
-                    $botW = $widths[$i + 1];
-                    $topL = (100 - $topW) / 2;
-                    $topR = $topL + $topW;
-                    $botL = (100 - $botW) / 2;
-                    $botR = $botL + $botW;
-                    $clip = "polygon({$topL}% 0, {$topR}% 0, {$botR}% 100%, {$botL}% 100%)";
+                    $y1 = $i * $tierH;
+                    $y2 = ($i + 1) * $tierH;
+                    $w1 = $widths[$i];
+                    $w2 = $widths[$i + 1];
+                    $x1L = ($svgW - $w1) / 2;
+                    $x1R = $x1L + $w1;
+                    $x2L = ($svgW - $w2) / 2;
+                    $x2R = $x2L + $w2;
+                    $cy = $y1 + $tierH / 2;
                     $prevValue = $i > 0 ? $funnelSteps[$i - 1]['value'] : null;
                     $dropPct = ($prevValue && $prevValue > 0) ? round((1 - $step['value'] / $prevValue) * 100) : null;
                 ?>
-                <div class="os-funnel-slice" style="clip-path:<?= $clip ?>;background:<?= $step['color'] ?>">
-                    <span class="os-funnel-slice-label"><?= $step['label'] ?></span>
-                    <span class="os-funnel-slice-value"><?= number_format($step['value']) ?><?php if ($dropPct !== null && $dropPct > 0): ?> <small class="os-funnel-slice-drop">-<?= $dropPct ?>%</small><?php endif; ?></span>
-                </div>
+                <polygon points="<?= "$x1L,$y1 $x1R,$y1 $x2R,$y2 $x2L,$y2" ?>" fill="url(#fg<?= $i ?>)" class="os-funnel-poly"/>
+                <text x="<?= $svgW / 2 ?>" y="<?= $cy - 6 ?>" text-anchor="middle" class="os-funnel-svg-label"><?= $step['label'] ?></text>
+                <text x="<?= $svgW / 2 ?>" y="<?= $cy + 14 ?>" text-anchor="middle" class="os-funnel-svg-value"><?= number_format($step['value']) ?><?php if ($dropPct !== null && $dropPct > 0): ?><tspan class="os-funnel-svg-drop"> -<?= $dropPct ?>%</tspan><?php endif; ?></text>
                 <?php endforeach; ?>
-            </div>
+            </svg>
         </div>
     </div>
 
