@@ -174,6 +174,12 @@ lsof -nP -iTCP:8093 -sTCP:LISTEN
 2. Token generatie + email verzending via Emailit API
 3. Klik op link → `/verify?token=XXX` → sessie aangemaakt
 
+**Lokaal**: magic link wordt overgeslagen, directe login met wachtwoord.
+
+### Inloggegevens
+- **Email**: `arjan@burgerweb.nl`
+- **Wachtwoord**: `ktv18#vp`
+
 ## Cross-Domain & Cross-Device Tracking
 
 ### Cross-domain (3 lagen)

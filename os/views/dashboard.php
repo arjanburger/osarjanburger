@@ -101,35 +101,77 @@ try {
 </div>
 
 <div class="os-grid-2">
-    <!-- Mini conversie funnel -->
+    <!-- Visuele conversie funnel -->
     <div class="os-panel">
         <div class="os-panel-header"><h2>Funnel vandaag</h2></div>
         <div class="os-panel-body">
             <?php
             $funnelMax = max($fViews, 1);
             $funnelSteps = [
-                ['label' => 'Pageviews', 'value' => $fViews, 'color' => 'var(--os-accent)'],
+                ['label' => 'Pageviews', 'value' => $fViews, 'color' => '#C9A84C'],
                 ['label' => 'Scroll 50%+', 'value' => $fScroll, 'color' => '#7cb5ec'],
                 ['label' => 'CTA click', 'value' => $fCta, 'color' => '#90ed7d'],
                 ['label' => 'Formulier', 'value' => $fForm, 'color' => '#f7a35c'],
             ];
-            foreach ($funnelSteps as $step):
-                $pct = round(($step['value'] / $funnelMax) * 100);
+            $stepCount = count($funnelSteps);
             ?>
-            <div class="os-funnel-step">
-                <div class="os-funnel-label">
-                    <span><?= $step['label'] ?></span>
-                    <span class="os-funnel-count"><?= number_format($step['value']) ?></span>
+            <div class="os-visual-funnel">
+                <?php foreach ($funnelSteps as $i => $step):
+                    $pct = $funnelMax > 0 ? ($step['value'] / $funnelMax) * 100 : 0;
+                    $widthPct = max(20, 100 - ($i * (80 / max($stepCount - 1, 1))));
+                    $prevValue = $i > 0 ? $funnelSteps[$i - 1]['value'] : null;
+                    $dropPct = ($prevValue && $prevValue > 0) ? round((1 - $step['value'] / $prevValue) * 100) : null;
+                ?>
+                <div class="os-funnel-tier">
+                    <div class="os-funnel-bar" style="width:<?= $widthPct ?>%;background:<?= $step['color'] ?>">
+                        <span class="os-funnel-bar-label"><?= $step['label'] ?></span>
+                        <span class="os-funnel-bar-value"><?= number_format($step['value']) ?></span>
+                    </div>
+                    <?php if ($dropPct !== null && $dropPct > 0): ?>
+                        <span class="os-funnel-drop-badge">-<?= $dropPct ?>%</span>
+                    <?php endif; ?>
                 </div>
-                <div class="os-bar-track">
-                    <div class="os-bar-fill" style="width:<?= $pct ?>%;background:<?= $step['color'] ?>"></div>
-                </div>
+                <?php endforeach; ?>
             </div>
-            <?php endforeach; ?>
         </div>
     </div>
 
-    <!-- Recente activiteit feed -->
+    <!-- Recente aanmeldingen -->
+    <div class="os-panel">
+        <div class="os-panel-header"><h2>Recente aanmeldingen</h2></div>
+        <div class="os-panel-body">
+            <?php if (empty($recentForms)): ?>
+                <p class="os-empty">Nog geen aanmeldingen ontvangen.</p>
+            <?php else: ?>
+                <table class="os-table">
+                    <thead><tr><th>Wanneer</th><th>Pagina</th><th>Naam</th><th>Email</th></tr></thead>
+                    <tbody>
+                    <?php foreach ($recentForms as $form):
+                        $fields = json_decode($form['fields_json'], true) ?? [];
+                    ?>
+                        <tr>
+                            <td><?= date('d M H:i', strtotime($form['created_at'])) ?></td>
+                            <td><?= htmlspecialchars($form['page_title'] ?? $form['page_slug']) ?></td>
+                            <td><?= htmlspecialchars($fields['naam'] ?? '—') ?></td>
+                            <td><?= htmlspecialchars($fields['email'] ?? '—') ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<!-- Sparkline + live activiteit -->
+<div class="os-grid-2">
+    <div class="os-panel">
+        <div class="os-panel-header"><h2>Pageviews (7 dagen)</h2></div>
+        <div class="os-panel-body">
+            <canvas id="sparkChart" height="100"></canvas>
+        </div>
+    </div>
+
     <div class="os-panel">
         <div class="os-panel-header"><h2>Live activiteit</h2></div>
         <div class="os-panel-body">
@@ -156,41 +198,6 @@ try {
                     </div>
                 <?php endforeach; ?>
                 </div>
-            <?php endif; ?>
-        </div>
-    </div>
-</div>
-
-<!-- Sparkline + recente aanmeldingen -->
-<div class="os-grid-2">
-    <div class="os-panel">
-        <div class="os-panel-header"><h2>Pageviews (7 dagen)</h2></div>
-        <div class="os-panel-body">
-            <canvas id="sparkChart" height="100"></canvas>
-        </div>
-    </div>
-
-    <div class="os-panel">
-        <div class="os-panel-header"><h2>Recente aanmeldingen</h2></div>
-        <div class="os-panel-body">
-            <?php if (empty($recentForms)): ?>
-                <p class="os-empty">Nog geen aanmeldingen ontvangen.</p>
-            <?php else: ?>
-                <table class="os-table">
-                    <thead><tr><th>Wanneer</th><th>Pagina</th><th>Naam</th><th>Email</th></tr></thead>
-                    <tbody>
-                    <?php foreach ($recentForms as $form):
-                        $fields = json_decode($form['fields_json'], true) ?? [];
-                    ?>
-                        <tr>
-                            <td><?= date('d M H:i', strtotime($form['created_at'])) ?></td>
-                            <td><?= htmlspecialchars($form['page_title'] ?? $form['page_slug']) ?></td>
-                            <td><?= htmlspecialchars($fields['naam'] ?? '—') ?></td>
-                            <td><?= htmlspecialchars($fields['email'] ?? '—') ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
             <?php endif; ?>
         </div>
     </div>
