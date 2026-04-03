@@ -478,55 +478,49 @@ body {
     font-weight: 400;
 }
 
-/* Visual funnel */
-.os-visual-funnel {
+/* Visual funnel (trapezoid shape) */
+.os-funnel-shape {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.35rem;
-    padding: 0.5rem 0;
+    padding: 0.25rem 0;
 }
 
-.os-funnel-tier {
-    display: flex;
-    align-items: center;
+.os-funnel-slice {
     width: 100%;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.os-funnel-bar {
+    height: 56px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 0.6rem 1rem;
-    border-radius: 4px;
-    min-height: 38px;
-    transition: opacity 0.2s;
+    justify-content: center;
+    gap: 0.75rem;
+    position: relative;
+    transition: filter 0.2s;
+    cursor: default;
 }
 
-.os-funnel-bar:hover { opacity: 0.85; }
+.os-funnel-slice:hover {
+    filter: brightness(1.15);
+}
 
-.os-funnel-bar-label {
-    font-size: 0.78rem;
-    font-weight: 500;
+.os-funnel-slice-label {
+    font-size: 0.8rem;
+    font-weight: 600;
     color: #0a0a0a;
-    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.2);
 }
 
-.os-funnel-bar-value {
-    font-size: 0.85rem;
+.os-funnel-slice-value {
+    font-size: 0.9rem;
     font-weight: 700;
     color: #0a0a0a;
     font-variant-numeric: tabular-nums;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.2);
 }
 
-.os-funnel-drop-badge {
+.os-funnel-slice-drop {
     font-size: 0.65rem;
-    color: var(--os-danger, #e55);
     font-weight: 600;
-    white-space: nowrap;
-    flex-shrink: 0;
+    color: rgba(180, 40, 40, 0.85);
 }
 
 .os-bar-track {

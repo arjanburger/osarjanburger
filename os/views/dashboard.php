@@ -113,23 +113,29 @@ try {
                 ['label' => 'CTA click', 'value' => $fCta, 'color' => '#90ed7d'],
                 ['label' => 'Formulier', 'value' => $fForm, 'color' => '#f7a35c'],
             ];
-            $stepCount = count($funnelSteps);
+            $n = count($funnelSteps);
+            // Bereken top/bottom breedte per tier (100% bovenaan → 15% onderaan)
+            $widths = [];
+            for ($i = 0; $i < $n; $i++) {
+                $widths[] = 100 - ($i * (85 / $n));
+            }
+            $widths[] = 15; // bottom van laatste tier
             ?>
-            <div class="os-visual-funnel">
+            <div class="os-funnel-shape">
                 <?php foreach ($funnelSteps as $i => $step):
-                    $pct = $funnelMax > 0 ? ($step['value'] / $funnelMax) * 100 : 0;
-                    $widthPct = max(20, 100 - ($i * (80 / max($stepCount - 1, 1))));
+                    $topW = $widths[$i];
+                    $botW = $widths[$i + 1];
+                    $topL = (100 - $topW) / 2;
+                    $topR = $topL + $topW;
+                    $botL = (100 - $botW) / 2;
+                    $botR = $botL + $botW;
+                    $clip = "polygon({$topL}% 0, {$topR}% 0, {$botR}% 100%, {$botL}% 100%)";
                     $prevValue = $i > 0 ? $funnelSteps[$i - 1]['value'] : null;
                     $dropPct = ($prevValue && $prevValue > 0) ? round((1 - $step['value'] / $prevValue) * 100) : null;
                 ?>
-                <div class="os-funnel-tier">
-                    <div class="os-funnel-bar" style="width:<?= $widthPct ?>%;background:<?= $step['color'] ?>">
-                        <span class="os-funnel-bar-label"><?= $step['label'] ?></span>
-                        <span class="os-funnel-bar-value"><?= number_format($step['value']) ?></span>
-                    </div>
-                    <?php if ($dropPct !== null && $dropPct > 0): ?>
-                        <span class="os-funnel-drop-badge">-<?= $dropPct ?>%</span>
-                    <?php endif; ?>
+                <div class="os-funnel-slice" style="clip-path:<?= $clip ?>;background:<?= $step['color'] ?>">
+                    <span class="os-funnel-slice-label"><?= $step['label'] ?></span>
+                    <span class="os-funnel-slice-value"><?= number_format($step['value']) ?><?php if ($dropPct !== null && $dropPct > 0): ?> <small class="os-funnel-slice-drop">-<?= $dropPct ?>%</small><?php endif; ?></span>
                 </div>
                 <?php endforeach; ?>
             </div>
