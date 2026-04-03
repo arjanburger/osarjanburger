@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="login-card">
         <div class="login-logo">
-            <div class="login-logo-mark">AB</div>
+            <svg viewBox="0 0 58 52" width="40" height="36" style="flex-shrink:0"><rect x="0" y="0" width="2" height="52" fill="#C9A84C"/><rect x="6" y="0" width="52" height="52" fill="#1A3550"/><text x="32" y="26" text-anchor="middle" dominant-baseline="central" font-family="Montserrat, sans-serif" font-weight="700" font-size="18" letter-spacing="2" fill="#FDFCFA">AB</text></svg>
             <span class="login-logo-text">OS</span>
         </div>
 

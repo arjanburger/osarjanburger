@@ -23,7 +23,7 @@ $p = defined('OS_URL_PREFIX') ? OS_URL_PREFIX : '';
         <aside class="os-sidebar">
             <div class="os-sidebar-header">
                 <div class="os-logo">
-                    <span class="os-logo-mark">AB</span>
+                    <svg viewBox="0 0 58 52" width="32" height="29" style="flex-shrink:0"><rect x="0" y="0" width="2" height="52" fill="#C9A84C"/><rect x="6" y="0" width="52" height="52" fill="#1A3550"/><text x="32" y="26" text-anchor="middle" dominant-baseline="central" font-family="Montserrat, sans-serif" font-weight="700" font-size="18" letter-spacing="2" fill="#FDFCFA">AB</text></svg>
                     <span class="os-logo-text">OS</span>
                 </div>
                 <span class="os-version">v<?= OS_VERSION ?></span>

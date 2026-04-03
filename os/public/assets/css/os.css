@@ -65,19 +65,8 @@ body {
     gap: 0.5rem;
 }
 
-.os-logo-mark {
-    background: var(--os-navy);
-    color: #fff;
-    font-weight: 700;
-    font-size: 0.85rem;
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(201, 168, 76, 0.2);
-    letter-spacing: 0.05em;
+.os-logo svg {
+    display: block;
 }
 
 .os-logo-text {

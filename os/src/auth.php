@@ -109,7 +109,7 @@ function sendLoginEmail(string $email, string $name, string $token): void {
                 <tr><td align="center">
                     <table cellpadding="0" cellspacing="0" border="0">
                         <tr>
-                            <td style="background: #1A3550; color: #ffffff; font-weight: 700; font-size: 14px; width: 42px; height: 42px; border-radius: 6px; text-align: center; vertical-align: middle; border: 1px solid #C9A84C33; letter-spacing: 1px;">AB</td>
+                            <td style="vertical-align: middle;"><img src="https://os.arjanburger.com/assets/img/logo-ab.svg" width="40" height="36" alt="AB" style="display: block;"></td>
                             <td style="padding-left: 8px; font-weight: 600; font-size: 18px; color: #e0e0e0; vertical-align: middle;">OS</td>
                         </tr>
                     </table>
