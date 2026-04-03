@@ -2,6 +2,15 @@
 
 Voer deze skill uit na elke deploy naar productie. Test alle kritieke systemen zonder in te loggen.
 
+## Uitvoering
+- Deze skill wordt uitgevoerd als **standalone subagent** zonder conversatie-context.
+- Voer alle checks zelfstandig uit vanuit de project root (`/Users/arjanburger/Dev/ArjanBurgerOS`).
+- **Doe geen code wijzigingen.** Alleen testen en rapporteren.
+- Stuur een gestructureerde samenvatting terug naar de hoofdagent met:
+  - Per stap: **PASS** of **FAIL** + korte toelichting
+  - Totaal: X/Y geslaagd
+  - Bij failures: exacte output + suggestie voor fix
+
 ## Stappen
 
 ### 1. Deploy triggeren
@@ -99,5 +108,24 @@ find os/ api/ flow/public/deploy.php -name "*.php" -exec php -l {} \; 2>&1 | gre
 - Security headers ontbreken
 - PHP syntax errors
 
-## Na de test
-Meld resultaten als samenvatting: hoeveel tests geslaagd, eventuele fouten.
+## Rapportage aan hoofdagent
+Retourneer een gestructureerd rapport in dit formaat:
+
+```
+## Deploy & Test Resultaat
+**Datum:** YYYY-MM-DD HH:MM
+**Status:** ✅ ALLES OK / ❌ FAILURES
+
+| # | Test | Status | Details |
+|---|------|--------|---------|
+| 1 | Deploy trigger | PASS/FAIL | ... |
+| 2 | API Health | PASS/FAIL | ... |
+| ... | ... | ... | ... |
+
+**Totaal:** X/8 geslaagd
+
+### Failures (indien van toepassing)
+- **Test X:** Exacte foutmelding + suggestie voor fix
+```
+
+**Belangrijk:** Wijzig geen code. Rapporteer alleen bevindingen en suggesties.

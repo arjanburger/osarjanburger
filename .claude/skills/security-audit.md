@@ -2,6 +2,16 @@
 
 Voer deze skill uit periodiek of na grote wijzigingen. Controleert alle componenten op bekende risico's.
 
+## Uitvoering
+- Deze skill wordt uitgevoerd als **standalone subagent** zonder conversatie-context.
+- Voer alle checks zelfstandig uit vanuit de project root (`/Users/arjanburger/Dev/ArjanBurgerOS`).
+- **Doe geen code wijzigingen.** Alleen controleren en rapporteren.
+- Stuur een gestructureerde samenvatting terug naar de hoofdagent met:
+  - Per check: **PASS** of **FAIL** + korte toelichting
+  - Totaal: X/24 geslaagd
+  - Bij failures: exacte output + ernst (kritiek/medium/laag) + suggestie voor fix
+  - Nieuwe bevindingen die niet in de checklist staan
+
 ---
 
 ## A. PHP — Server-side Security
@@ -177,3 +187,42 @@ grep -rn "http://" flow/public/ --include="*.html" --include="*.css" | grep -v "
 - Geen rate limiting op tracking endpoints
 - Login tokens in plaintext in DB (beter: SHA-256 hash)
 - IP-adressen opgeslagen: check AVG/GDPR compliance (privacy policy nodig)
+
+---
+
+## Rapportage aan hoofdagent
+Retourneer een gestructureerd rapport in dit formaat:
+
+```
+## Security Audit Resultaat
+**Datum:** YYYY-MM-DD HH:MM
+**Status:** ✅ ALLES OK / ⚠️ ISSUES GEVONDEN
+
+### A. PHP — Server-side Security
+| # | Check | Status | Details |
+|---|-------|--------|---------|
+| 1 | Hardcoded secrets | PASS/FAIL | ... |
+| ... | ... | ... | ... |
+
+### B. JavaScript — Client-side Security
+| # | Check | Status | Details |
+|---|-------|--------|---------|
+| 9 | Secrets in JS | PASS/FAIL | ... |
+| ... | ... | ... | ... |
+
+(herhaal voor C, D, E)
+
+**Totaal:** X/24 geslaagd
+
+### Issues (indien van toepassing)
+| Ernst | Check | Probleem | Suggestie |
+|-------|-------|----------|-----------|
+| 🔴 Kritiek | ... | ... | ... |
+| 🟡 Medium | ... | ... | ... |
+| 🟢 Laag | ... | ... | ... |
+
+### Nieuwe bevindingen
+- Eventuele risico's die niet in de checklist staan
+```
+
+**Belangrijk:** Wijzig geen code. Rapporteer alleen bevindingen en suggesties.
