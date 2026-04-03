@@ -455,7 +455,7 @@ if (canvas && data.length > 0) {
     data.forEach((d, i) => {
         const x = pad.left + (chartW / data.length) * i + 1;
         const barH = (d.views / maxVal) * chartH;
-        ctx.fillStyle = '#c8a55c';
+        ctx.fillStyle = '#C9A84C';
         ctx.beginPath(); ctx.roundRect(x, pad.top + chartH - barH, barW, barH, 2); ctx.fill();
     });
     ctx.fillStyle = '#666'; ctx.font = '10px Inter, sans-serif'; ctx.textAlign = 'right';

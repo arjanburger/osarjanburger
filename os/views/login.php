@@ -57,8 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             justify-content: center;
         }
         .login-logo-mark {
-            background: #c8a55c;
-            color: #0a0a0a;
+            background: #1A3550;
+            color: #fff;
             font-weight: 700;
             font-size: 1.1rem;
             width: 40px;
@@ -67,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: flex;
             align-items: center;
             justify-content: center;
+            border-left: 3px solid #C9A84C;
         }
         .login-logo-text { font-weight: 600; font-size: 1.25rem; }
         .login-title { font-size: 1.1rem; font-weight: 500; margin-bottom: 1.5rem; text-align: center; color: #999; }
@@ -83,11 +84,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-family: inherit;
             transition: border-color 0.2s;
         }
-        .form-group input:focus { outline: none; border-color: #c8a55c; }
+        .form-group input:focus { outline: none; border-color: #C9A84C; }
         .login-btn {
             width: 100%;
             padding: 0.85rem;
-            background: #c8a55c;
+            background: #C9A84C;
             color: #0a0a0a;
             border: none;
             border-radius: 8px;
@@ -98,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transition: background 0.2s;
             margin-top: 0.5rem;
         }
-        .login-btn:hover { background: #d4b36a; }
+        .login-btn:hover { background: #D4B65E; }
         .login-error {
             background: rgba(220, 50, 50, 0.1);
             border: 1px solid rgba(220, 50, 50, 0.3);
@@ -128,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-bottom: 0.5rem;
         }
         .login-success .email-highlight {
-            color: #c8a55c;
+            color: #C9A84C;
             font-weight: 500;
         }
         .login-back {
@@ -139,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-decoration: none;
             transition: color 0.2s;
         }
-        .login-back:hover { color: #c8a55c; }
+        .login-back:hover { color: #C9A84C; }
     </style>
 </head>
 <body>

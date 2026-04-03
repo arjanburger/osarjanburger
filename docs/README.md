@@ -109,7 +109,7 @@ Privé admin interface met sessie-gebaseerde authenticatie (bcrypt).
 - Variabele `$uri` = huidige route (voor active nav highlighting)
 
 ### CSS
-- Donker thema met goud accent (`#c8a55c`)
+- Donker thema met goud accent (`#C9A84C`)
 - Font: Inter (Google Fonts)
 - CSS variabelen in `:root` voor alle kleuren
 - Responsive breakpoints: 1200px, 768px

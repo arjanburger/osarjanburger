@@ -219,7 +219,7 @@ if (canvas && data.length > 0) {
     ctx.strokeStyle = '#222'; ctx.lineWidth = 0.5;
     for (let i = 0; i <= 4; i++) { const y = pad.top + (chartH / 4) * i; ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(w - pad.right, y); ctx.stroke(); }
     const barW = Math.max(2, (chartW / data.length) - 2);
-    data.forEach((d, i) => { const x = pad.left + (chartW / data.length) * i + 1; const barH = (d.views / maxVal) * chartH; ctx.fillStyle = '#c8a55c'; ctx.beginPath(); ctx.roundRect(x, pad.top + chartH - barH, barW, barH, 2); ctx.fill(); });
+    data.forEach((d, i) => { const x = pad.left + (chartW / data.length) * i + 1; const barH = (d.views / maxVal) * chartH; ctx.fillStyle = '#C9A84C'; ctx.beginPath(); ctx.roundRect(x, pad.top + chartH - barH, barW, barH, 2); ctx.fill(); });
     ctx.fillStyle = '#666'; ctx.font = '10px Inter, sans-serif'; ctx.textAlign = 'right';
     for (let i = 0; i <= 4; i++) { ctx.fillText(Math.round((maxVal / 4) * (4 - i)), pad.left - 8, pad.top + (chartH / 4) * i + 4); }
     ctx.textAlign = 'center';

@@ -116,7 +116,7 @@ os-empty           # Lege state tekst
 --os-border: #1e1e1e;         /* Randen */
 --os-text: #e5e5e5;           /* Tekst */
 --os-text-muted: #888;        /* Secundaire tekst */
---os-accent: #c8a55c;         /* Goud accent (buttons, links, active) */
+--os-accent: #C9A84C;         /* Goud accent (buttons, links, active) */
 ```
 
 ### Modal Pattern

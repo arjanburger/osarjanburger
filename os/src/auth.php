@@ -104,15 +104,15 @@ function sendLoginEmail(string $email, string $name, string $token): void {
 <body style="font-family: 'Inter', Arial, sans-serif; background: #0a0a0a; color: #e0e0e0; padding: 2rem;">
     <div style="max-width: 480px; margin: 0 auto; background: #141414; border: 1px solid #222; border-radius: 16px; padding: 2.5rem;">
         <div style="text-align: center; margin-bottom: 1.5rem;">
-            <span style="background: #c8a55c; color: #0a0a0a; font-weight: 700; font-size: 1.1rem; width: 40px; height: 40px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center;">AB</span>
+            <span style="background: #1A3550; color: #fff; font-weight: 700; font-size: 1.1rem; width: 40px; height: 40px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; border-left: 3px solid #C9A84C;">AB</span>
             <span style="font-weight: 600; font-size: 1.25rem; margin-left: 0.5rem;">OS</span>
         </div>
         <p style="color: #999; margin-bottom: 1.5rem;">Hoi {$name},</p>
         <p style="margin-bottom: 1.5rem;">Klik op de knop hieronder om in te loggen op ArjanBurger OS. Deze link is 15 minuten geldig.</p>
         <div style="text-align: center; margin: 2rem 0;">
-            <a href="{$link}" style="background: #c8a55c; color: #0a0a0a; padding: 0.85rem 2rem; border-radius: 8px; font-weight: 600; text-decoration: none; display: inline-block;">Inloggen</a>
+            <a href="{$link}" style="background: #C9A84C; color: #0a0a0a; padding: 0.85rem 2rem; border-radius: 8px; font-weight: 600; text-decoration: none; display: inline-block;">Inloggen</a>
         </div>
-        <p style="color: #666; font-size: 0.85rem;">Of kopieer deze link:<br><a href="{$link}" style="color: #c8a55c; word-break: break-all;">{$link}</a></p>
+        <p style="color: #666; font-size: 0.85rem;">Of kopieer deze link:<br><a href="{$link}" style="color: #C9A84C; word-break: break-all;">{$link}</a></p>
         <hr style="border: none; border-top: 1px solid #222; margin: 1.5rem 0;">
         <p style="color: #555; font-size: 0.8rem;">Als je dit niet hebt aangevraagd, kun je deze email negeren.</p>
     </div>

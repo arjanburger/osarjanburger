@@ -18,7 +18,7 @@ Landing page tracking platform met dashboard. Drie onderdelen: **OS** (dashboard
 
 - PHP 8.4 (geen framework, plain templates)
 - MySQL 8.0
-- Vanilla JS + CSS (dark theme, goud accent `#c8a55c`)
+- Vanilla JS + CSS (dark theme, goud accent `#C9A84C`)
 - Caddy (productie), `php -S` (lokaal via `router.php`)
 - Emailit API v2 voor magic link emails
 

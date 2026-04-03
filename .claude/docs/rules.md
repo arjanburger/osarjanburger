@@ -21,7 +21,7 @@
 ## CSS Regels
 
 - Gebruik bestaande `os-*` klassen waar mogelijk
-- Dark theme: achtergrond `#0a0a0a`, panels `#141414`, accent `#c8a55c`
+- Dark theme: achtergrond `#0a0a0a`, panels `#141414`, accent `#C9A84C`
 - Geen inline styles tenzij echt nodig (bijv. dynamische kleuren in funnels)
 - Responsive via CSS grid, geen media queries tenzij nodig
 

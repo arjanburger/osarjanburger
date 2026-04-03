@@ -9,9 +9,10 @@
     --os-text: #e0e0e0;
     --os-text-muted: #888;
     --os-text-dim: #555;
-    --os-accent: #c8a55c;
-    --os-accent-hover: #d4b36a;
-    --os-accent-dim: rgba(200, 165, 92, 0.15);
+    --os-accent: #C9A84C;
+    --os-accent-hover: #D4B65E;
+    --os-accent-dim: rgba(201, 168, 76, 0.15);
+    --os-navy: #1A3550;
     --os-success: #4caf50;
     --os-warning: #ff9800;
     --os-danger: #e55;
@@ -65,8 +66,8 @@ body {
 }
 
 .os-logo-mark {
-    background: var(--os-accent);
-    color: var(--os-bg);
+    background: var(--os-navy);
+    color: #fff;
     font-weight: 700;
     font-size: 0.85rem;
     width: 32px;
@@ -75,6 +76,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    border-left: 3px solid var(--os-accent);
 }
 
 .os-logo-text {

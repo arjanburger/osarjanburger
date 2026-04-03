@@ -229,14 +229,14 @@ if (sc && spark.length > 0) {
         const y = pad.top + cH - (d.views / max) * cH;
         i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
     });
-    ctx.strokeStyle = '#c8a55c'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.strokeStyle = '#C9A84C'; ctx.lineWidth = 2; ctx.stroke();
 
     // Dots
     spark.forEach((d, i) => {
         const x = pad.left + (cW / (spark.length - 1 || 1)) * i;
         const y = pad.top + cH - (d.views / max) * cH;
         ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2);
-        ctx.fillStyle = '#c8a55c'; ctx.fill();
+        ctx.fillStyle = '#C9A84C'; ctx.fill();
     });
 
     // Labels
