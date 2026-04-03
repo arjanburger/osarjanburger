@@ -101,21 +101,34 @@ function sendLoginEmail(string $email, string $name, string $token): void {
 <!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"></head>
-<body style="font-family: 'Inter', Arial, sans-serif; background: #0a0a0a; color: #e0e0e0; padding: 2rem;">
-    <div style="max-width: 480px; margin: 0 auto; background: #141414; border: 1px solid #222; border-radius: 16px; padding: 2.5rem;">
-        <div style="text-align: center; margin-bottom: 1.5rem;">
-            <span style="background: #1A3550; color: #fff; font-weight: 700; font-size: 1.1rem; width: 40px; height: 40px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; border-left: 3px solid #C9A84C;">AB</span>
-            <span style="font-weight: 600; font-size: 1.25rem; margin-left: 0.5rem;">OS</span>
-        </div>
-        <p style="color: #999; margin-bottom: 1.5rem;">Hoi {$name},</p>
-        <p style="margin-bottom: 1.5rem;">Klik op de knop hieronder om in te loggen op ArjanBurger OS. Deze link is 15 minuten geldig.</p>
-        <div style="text-align: center; margin: 2rem 0;">
-            <a href="{$link}" style="background: #C9A84C; color: #0a0a0a; padding: 0.85rem 2rem; border-radius: 8px; font-weight: 600; text-decoration: none; display: inline-block;">Inloggen</a>
-        </div>
-        <p style="color: #666; font-size: 0.85rem;">Of kopieer deze link:<br><a href="{$link}" style="color: #C9A84C; word-break: break-all;">{$link}</a></p>
-        <hr style="border: none; border-top: 1px solid #222; margin: 1.5rem 0;">
-        <p style="color: #555; font-size: 0.8rem;">Als je dit niet hebt aangevraagd, kun je deze email negeren.</p>
-    </div>
+<body style="font-family: Arial, Helvetica, sans-serif; background: #0a0a0a; color: #e0e0e0; margin: 0; padding: 2rem;">
+    <table cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width: 480px; margin: 0 auto;">
+        <tr><td style="background: #141414; border: 1px solid #222; border-radius: 16px; padding: 2.5rem;">
+            <!-- Logo -->
+            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 1.5rem;">
+                <tr><td align="center">
+                    <table cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                            <td style="background: #1A3550; color: #ffffff; font-weight: 700; font-size: 14px; width: 42px; height: 42px; border-radius: 6px; text-align: center; vertical-align: middle; border: 1px solid #C9A84C33; letter-spacing: 1px;">AB</td>
+                            <td style="padding-left: 8px; font-weight: 600; font-size: 18px; color: #e0e0e0; vertical-align: middle;">OS</td>
+                        </tr>
+                    </table>
+                </td></tr>
+            </table>
+            <!-- Content -->
+            <p style="color: #999; margin: 0 0 1.5rem 0; font-size: 15px;">Hoi {$name},</p>
+            <p style="margin: 0 0 1.5rem 0; font-size: 15px; line-height: 1.6;">Klik op de knop hieronder om in te loggen op ArjanBurger OS. Deze link is 15 minuten geldig.</p>
+            <!-- Button -->
+            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 2rem 0;">
+                <tr><td align="center">
+                    <a href="{$link}" style="background: #C9A84C; color: #0a0a0a; padding: 14px 32px; border-radius: 6px; font-weight: 600; font-size: 15px; text-decoration: none; display: inline-block;">Inloggen</a>
+                </td></tr>
+            </table>
+            <p style="color: #666; font-size: 13px; margin: 0 0 1.5rem 0;">Of kopieer deze link:<br><a href="{$link}" style="color: #C9A84C; word-break: break-all;">{$link}</a></p>
+            <hr style="border: none; border-top: 1px solid #222; margin: 0 0 1.5rem 0;">
+            <p style="color: #555; font-size: 12px; margin: 0;">Als je dit niet hebt aangevraagd, kun je deze email negeren.</p>
+        </td></tr>
+    </table>
 </body>
 </html>
 HTML;

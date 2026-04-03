@@ -61,13 +61,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #fff;
             font-weight: 700;
             font-size: 1.1rem;
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+            width: 42px;
+            height: 42px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-left: 3px solid #C9A84C;
+            border: 1px solid rgba(201, 168, 76, 0.2);
+            letter-spacing: 0.05em;
         }
         .login-logo-text { font-weight: 600; font-size: 1.25rem; }
         .login-title { font-size: 1.1rem; font-weight: 500; margin-bottom: 1.5rem; text-align: center; color: #999; }
