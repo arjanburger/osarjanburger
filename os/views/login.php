@@ -13,8 +13,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    if (attemptLogin($email, $password)) {
-        // Wachtwoord klopt → email verstuurd met magic link
+    $isLocal = in_array($_SERVER['SERVER_NAME'] ?? '', ['localhost', '127.0.0.1', '192.168.3.135']) || str_starts_with($_SERVER['HTTP_HOST'] ?? '', 'hid.dev');
+
+    if ($isLocal) {
+        // Lokaal: direct inloggen zonder magic link
+        require_once dirname(__DIR__) . '/src/config.php';
+        $stmt = db()->prepare('SELECT id, name, email, password_hash FROM os_users WHERE email = ? LIMIT 1');
+        $stmt->execute([$email]);
+        $user = $stmt->fetch();
+        if ($user && password_verify($password, $user['password_hash'])) {
+            session_regenerate_id(true);
+            $_SESSION['os_user_id'] = $user['id'];
+            $_SESSION['os_user_email'] = $user['email'];
+            $_SESSION['os_user_name'] = $user['name'];
+            $prefix = defined('OS_URL_PREFIX') ? OS_URL_PREFIX : '';
+            header('Location: ' . $prefix . '/dashboard');
+            exit;
+        } else {
+            $error = 'Ongeldige inloggegevens.';
+        }
+    } elseif (attemptLogin($email, $password)) {
+        // Productie: magic link email
         $emailSent = true;
     } else {
         $error = 'Ongeldige inloggegevens.';

@@ -156,7 +156,7 @@ $eventConfig = [
 </div>
 
 <!-- Stats -->
-<div class="os-stats-grid" style="grid-template-columns:repeat(4,1fr)">
+<div class="os-stats-grid" style="grid-template-columns:repeat(4,1fr);max-width:100%">
     <div class="os-stat-card">
         <div class="os-stat-label">Events</div>
         <div class="os-stat-value"><?= count($events) ?></div>

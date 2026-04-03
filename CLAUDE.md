@@ -19,7 +19,7 @@ Landing page tracking platform met dashboard. Drie onderdelen: **OS** (dashboard
 - PHP 8.4 (geen framework, plain templates)
 - MySQL 8.0
 - Vanilla JS + CSS (dark theme, goud accent `#C9A84C`)
-- Caddy (productie), `php -S` (lokaal via `router.php`)
+- Caddy + PHP-FPM (lokaal), Apache (productie Hostinger)
 - Emailit API v2 voor magic link emails
 
 ## Projectstructuur
@@ -145,12 +145,27 @@ Push naar `main` → Hostinger webhook → `deploy.php`:
 
 ## Lokaal draaien
 
+Draait via **Caddy + PHP-FPM** (brew services), NIET via `php -S`.
+
 ```bash
-php -S 127.0.0.1:18093 router.php
-# OS: http://127.0.0.1:18093/os/dashboard
-# API: http://127.0.0.1:18093/api/health
-# Flow: http://127.0.0.1:18093/flow/doorbraak/
+# Services starten (normaal al actief als brew services)
+/opt/homebrew/bin/brew services start caddy
+/opt/homebrew/bin/brew services start php@8.4
+/opt/homebrew/bin/brew services start mysql
+
+# Health check
+/opt/homebrew/bin/brew services list | grep -E 'caddy|mysql|php'
+lsof -nP -iTCP:8093 -sTCP:LISTEN
 ```
+
+| URL lokaal | URL productie | Wat |
+|---|---|---|
+| `http://192.168.3.135:8093/os/login` | `https://os.arjanburger.com/login` | Dashboard |
+| `http://192.168.3.135:8093/api/health` | `https://os.arjanburger.com/api/health` | API |
+| `http://192.168.3.135:8093/flow/doorbraak/` | `https://flow.arjanburger.com/doorbraak/` | Landing page |
+| `https://hid.dev/*` | (zelfde) | Lokale HTTPS variant |
+
+**Infra details**: zie `/Users/arjanburger/Dev/infra/projects/arjanburger-os/`
 
 ## Authenticatie
 
