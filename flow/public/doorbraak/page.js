@@ -37,21 +37,28 @@ function onPlayerReady(event) {
     function handleUnmute() {
         if (!ytPlayer) return;
 
+        // Hide overlay first
+        overlay.classList.add('hidden');
+
         // Unmute and restart from beginning
         ytPlayer.unMute();
         ytPlayer.setVolume(100);
         ytPlayer.seekTo(0, true);
         ytPlayer.playVideo();
 
-        // Re-create player with controls visible
+        // Enable controls by reloading src, then re-apply unmute after load
         const iframe = ytPlayer.getIframe();
         if (iframe) {
-            const src = iframe.src;
-            iframe.src = src.replace('controls=0', 'controls=1');
+            const newSrc = iframe.src.replace('controls=0', 'controls=1');
+            iframe.src = newSrc;
+            iframe.addEventListener('load', function () {
+                setTimeout(function () {
+                    ytPlayer.unMute();
+                    ytPlayer.setVolume(100);
+                    ytPlayer.playVideo();
+                }, 300);
+            }, { once: true });
         }
-
-        // Hide overlay
-        overlay.classList.add('hidden');
     }
 
     if (overlay) overlay.addEventListener('click', handleUnmute);

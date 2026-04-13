@@ -381,64 +381,79 @@ body {
     position: relative;
     border-radius: var(--radius);
     overflow: hidden;
-    aspect-ratio: 16/9;
-    background: var(--bg-card);
+    background: #000;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(201, 168, 76, 0.1);
+    border: 1px solid rgba(201, 168, 76, 0.2);
     margin-bottom: 8px;
 }
 
 .video-player {
-    width: 100%;
-    height: 100%;
     position: relative;
+    z-index: 1;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    background: #000;
 }
 
 .video-player iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    border: none;
+    border: 0;
 }
 
-.video-overlay {
+.video-unmute-overlay {
     position: absolute;
     inset: 0;
+    z-index: 10;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    background: rgba(0, 0, 0, 0.5);
+    gap: 16px;
+    background: rgba(0, 0, 0, 0.35);
     cursor: pointer;
-    transition: background 0.3s;
+    transition: all 0.5s ease-out;
 }
 
-.video-overlay:hover { background: rgba(0, 0, 0, 0.3); }
+.video-unmute-overlay:hover { background: rgba(0, 0, 0, 0.25); }
+.video-unmute-overlay.hidden { opacity: 0; pointer-events: none; }
 
-.video-play-btn {
-    width: 72px;
-    height: 72px;
+.video-unmute-btn {
+    width: 88px;
+    height: 88px;
     border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    background: rgba(201, 168, 76, 0.15);
+    border: 2px solid rgba(200, 165, 92, 0.6);
+    background: rgba(200, 165, 92, 0.15);
     color: var(--gold);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.4s ease-out;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding-left: 6px;
 }
 
-.video-play-btn:hover {
+.video-unmute-btn:hover {
     background: var(--gold);
     color: var(--bg);
     border-color: var(--gold);
+    transform: scale(1.1);
+    box-shadow: 0 0 60px rgba(200, 165, 92, 0.4);
 }
 
-.video-play-label {
+.video-unmute-label {
     font-size: 0.75rem;
-    color: var(--text-soft);
-    letter-spacing: 0.05em;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 /* ========================================
