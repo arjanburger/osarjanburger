@@ -6,6 +6,7 @@
     <title>De Doorbraak Methode | Gratis Live Webinar</title>
     <meta name="description" content="Ontdek in 90 minuten hoe je het onzichtbare plafond doorbreekt. Gratis live webinar met Arjan Burger.">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/js/player.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600;1,700&family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -74,17 +75,7 @@
     <section class="section section-video" id="video">
         <div class="container">
             <p class="pre-label">Bekijk eerst</p>
-            <div class="video-wrap animate-in">
-                <div class="video-player" id="videoPlayer">
-                    <div id="ytPlayer"></div>
-                    <div class="video-unmute-overlay" id="videoOverlay">
-                        <button class="video-unmute-btn" id="videoUnmuteBtn" type="button">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
-                        </button>
-                        <span class="video-unmute-label">Klik om af te spelen</span>
-                    </div>
-                </div>
-            </div>
+            <div class="flow-player animate-in" data-video="0jA4PrLi49g"></div>
             <div class="cta-bar animate-in">
                 <a href="#aanmelden" class="btn btn-primary btn-shimmer" data-flow-cta="video-aanmelden">
                     Claim Jouw Plek
@@ -390,8 +381,8 @@
         </div>
     </footer>
 
-    <script src="https://www.youtube.com/iframe_api"></script>
-    <script src="page.js"></script>
     <script src="/js/engine.js" data-page="doorbraakexclusive"></script>
+    <script src="/js/player.js"></script>
+    <script src="page.js"></script>
 </body>
 </html>

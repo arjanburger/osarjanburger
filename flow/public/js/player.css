@@ -1,0 +1,83 @@
+/* Flow Player — YouTube embed styling */
+.flow-player-wrap {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(200, 165, 92, 0.2);
+}
+
+.flow-player-inner {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    background: #000;
+}
+
+.flow-player-inner iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.flow-player-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background: rgba(0, 0, 0, 0.85);
+    cursor: pointer;
+    transition: all 0.5s ease-out;
+}
+
+.flow-player-overlay:hover {
+    background: rgba(0, 0, 0, 0.75);
+}
+
+.flow-player-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.flow-player-btn {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    border: 2px solid rgba(200, 165, 92, 0.6);
+    background: rgba(200, 165, 92, 0.15);
+    color: #C9A84C;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.4s ease-out;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding-left: 6px;
+}
+
+.flow-player-btn:hover {
+    background: #C9A84C;
+    color: #050505;
+    border-color: #C9A84C;
+    transform: scale(1.1);
+    box-shadow: 0 0 60px rgba(200, 165, 92, 0.4);
+}
+
+.flow-player-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #C9A84C;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}

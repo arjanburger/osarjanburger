@@ -356,120 +356,10 @@
     }
 
     // ── YouTube video tracking ───────────────────────────────
+    // Video tracking is nu afgehandeld door /js/player.js
+    // die FlowEngine.track() aanroept voor play/progress/complete events
     function trackYouTubeVideos() {
-        // Zoek YouTube iframes op de pagina
-        const iframes = document.querySelectorAll('iframe[src*="youtube.com"], iframe[src*="youtube-nocookie.com"]');
-        if (iframes.length === 0) return;
-
-        // Zorg dat iframes enablejsapi=1 hebben
-        iframes.forEach(iframe => {
-            const src = new URL(iframe.src);
-            if (!src.searchParams.has('enablejsapi')) {
-                src.searchParams.set('enablejsapi', '1');
-                iframe.src = src.toString();
-            }
-            if (!iframe.id) {
-                iframe.id = 'flow-yt-' + Math.random().toString(36).slice(2, 8);
-            }
-        });
-
-        // Laad YouTube IFrame API als die er nog niet is
-        if (!window.YT || !window.YT.Player) {
-            const tag = document.createElement('script');
-            tag.src = 'https://www.youtube.com/iframe_api';
-            document.head.appendChild(tag);
-        }
-
-        // Wacht tot API geladen is
-        const oldCallback = window.onYouTubeIframeAPIReady;
-        window.onYouTubeIframeAPIReady = function () {
-            if (oldCallback) oldCallback();
-            initYouTubePlayers(iframes);
-        };
-
-        // Als YT al geladen is, init direct
-        if (window.YT && window.YT.Player) {
-            initYouTubePlayers(iframes);
-        }
-    }
-
-    function initYouTubePlayers(iframes) {
-        iframes.forEach(iframe => {
-            const milestones = new Set();
-            let duration = 0;
-            let progressInterval = null;
-
-            try {
-                const player = new YT.Player(iframe.id, {
-                    events: {
-                        onReady: function (e) {
-                            duration = e.target.getDuration() || 0;
-                            log('YT player ready, duration:', duration);
-                        },
-                        onStateChange: function (e) {
-                            const videoId = extractVideoId(iframe.src);
-                            const currentTime = e.target.getCurrentTime() || 0;
-
-                            if (e.data === YT.PlayerState.PLAYING) {
-                                sendToApi('track/video', {
-                                    event: 'play',
-                                    video_id: videoId,
-                                    seconds_watched: Math.round(currentTime),
-                                    duration: Math.round(duration),
-                                });
-
-                                // Start voortgang bijhouden
-                                if (progressInterval) clearInterval(progressInterval);
-                                progressInterval = setInterval(function () {
-                                    const ct = player.getCurrentTime() || 0;
-                                    const d = player.getDuration() || duration;
-                                    if (d <= 0) return;
-                                    const pct = Math.round((ct / d) * 100);
-
-                                    [25, 50, 75, 100].forEach(m => {
-                                        if (pct >= m && !milestones.has(m)) {
-                                            milestones.add(m);
-                                            sendToApi('track/video', {
-                                                event: 'progress_' + m,
-                                                video_id: videoId,
-                                                seconds_watched: Math.round(ct),
-                                                duration: Math.round(d),
-                                            });
-                                        }
-                                    });
-                                }, 2000);
-                            }
-
-                            if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) {
-                                if (progressInterval) clearInterval(progressInterval);
-
-                                if (e.data === YT.PlayerState.ENDED) {
-                                    sendToApi('track/video', {
-                                        event: 'complete',
-                                        video_id: videoId,
-                                        seconds_watched: Math.round(duration),
-                                        duration: Math.round(duration),
-                                    });
-                                }
-                            }
-                        }
-                    }
-                });
-            } catch (err) {
-                log('YT player init error:', err);
-            }
-        });
-    }
-
-    function extractVideoId(url) {
-        try {
-            const u = new URL(url);
-            // /embed/VIDEO_ID
-            const match = u.pathname.match(/\/embed\/([^/?]+)/);
-            return match ? match[1] : u.pathname.split('/').pop();
-        } catch {
-            return 'unknown';
-        }
+        // No-op: player.js handelt dit af
     }
 
     // ── UTM opslag ───────────────────────────────────────────
@@ -494,6 +384,13 @@
         trackYouTubeVideos();
         decorateOutboundLinks();
     }
+
+    // ── Public API voor externe scripts (player.js) ───────
+    window.FlowEngine = {
+        track: sendToApi,
+        getVisitorId: generateVisitorId,
+        getPageSlug: function () { return PAGE_SLUG; },
+    };
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);

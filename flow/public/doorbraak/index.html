@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>High Impact Doorbraak | Jouw Grote Doorbraak in 5 Sessies</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/js/player.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
@@ -75,15 +76,7 @@
         <div class="container">
             <div class="video-wrapper reveal">
                 <div class="video-glow"></div>
-                <div class="video-player" id="videoPlayer">
-                    <div id="ytPlayer"></div>
-                    <div class="video-unmute-overlay" id="videoOverlay">
-                        <button class="video-unmute-btn" id="videoUnmuteBtn" type="button">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
-                        </button>
-                        <span class="video-unmute-label">Klik om af te spelen</span>
-                    </div>
-                </div>
+                <div class="flow-player" data-video="0jA4PrLi49g"></div>
             </div>
             <div class="hero-stats reveal">
                 <div class="hero-stat">
@@ -555,8 +548,8 @@
         </div>
     </footer>
 
-    <script src="https://www.youtube.com/iframe_api"></script>
-    <script src="page.js"></script>
     <script src="/js/engine.js" data-page="doorbraak"></script>
+    <script src="/js/player.js"></script>
+    <script src="page.js"></script>
 </body>
 </html>
