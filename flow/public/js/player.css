@@ -49,11 +49,11 @@
 }
 
 .flow-player-btn {
-    width: 72px;
-    height: 72px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.8);
-    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    background: rgba(0, 0, 0, 0.45);
     color: #fff;
     display: flex;
     align-items: center;
@@ -64,38 +64,36 @@
 }
 
 .flow-player-btn:hover {
-    background: rgba(0, 0, 0, 0.7);
-    transform: scale(1.08);
+    background: rgba(0, 0, 0, 0.6);
+    transform: scale(1.05);
     border-color: #fff;
 }
 
-.flow-player-label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
+.flow-player-label-top {
+    font-size: 1.1rem;
+    font-weight: 700;
     color: #fff;
-    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
 }
 
-/* Mute X lines */
-.flow-mute-x {
-    stroke: currentColor;
-    stroke-width: 2;
+.flow-player-label-bottom {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+    opacity: 0.9;
 }
 
 /* Sound waves — animated pulse */
 .flow-sound-wave {
-    stroke: currentColor;
-    stroke-width: 2;
-    fill: none;
-    animation: flowSoundPulse 1.2s ease-in-out infinite;
+    animation: flowSoundPulse 1.4s ease-in-out infinite;
 }
 
 .flow-wave-2 {
-    animation-delay: 0.3s;
+    animation-delay: 0.4s;
 }
 
 @keyframes flowSoundPulse {
-    0%, 100% { opacity: 0.3; }
+    0%, 100% { opacity: 0.2; }
     50% { opacity: 1; }
 }

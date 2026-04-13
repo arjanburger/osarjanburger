@@ -44,17 +44,16 @@
         var overlay = document.createElement('div');
         overlay.className = 'flow-player-overlay';
         overlay.innerHTML =
-            '<span class="flow-player-label">' + overlayTextTop + '</span>' +
+            '<span class="flow-player-label-top">' + overlayTextTop + '</span>' +
             '<button class="flow-player-btn" type="button">' +
-            '<svg class="flow-player-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-            '<polygon points="11,5 6,9 2,9 2,15 6,15 11,19" fill="currentColor" stroke="none"/>' +
-            '<line x1="23" y1="9" x2="17" y2="15" class="flow-mute-x"/>' +
-            '<line x1="17" y1="9" x2="23" y2="15" class="flow-mute-x"/>' +
-            '<path d="M19.07 4.93a10 10 0 0 1 0 14.14" class="flow-sound-wave flow-wave-1"/>' +
-            '<path d="M15.54 8.46a5 5 0 0 1 0 7.07" class="flow-sound-wave flow-wave-2"/>' +
+            '<svg class="flow-player-icon" width="48" height="48" viewBox="0 0 48 48" fill="none">' +
+            '<polygon points="8,16 8,32 16,32 24,40 24,8 16,16" fill="white"/>' +
+            '<line x1="4" y1="4" x2="44" y2="44" stroke="white" stroke-width="3" stroke-linecap="round"/>' +
+            '<path d="M32 17.5a7 7 0 0 1 0 13" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none" class="flow-sound-wave flow-wave-1"/>' +
+            '<path d="M36 12a13 13 0 0 1 0 24" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none" class="flow-sound-wave flow-wave-2"/>' +
             '</svg>' +
             '</button>' +
-            '<span class="flow-player-label">' + overlayTextBottom + '</span>';
+            '<span class="flow-player-label-bottom">' + overlayTextBottom + '</span>';
         playerDiv.appendChild(overlay);
 
         wrap.appendChild(playerDiv);
