@@ -33,14 +33,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 16px;
-    background: rgba(0, 0, 0, 0.85);
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.15);
     cursor: pointer;
-    transition: all 0.5s ease-out;
+    transition: all 0.4s ease-out;
 }
 
 .flow-player-overlay:hover {
-    background: rgba(0, 0, 0, 0.75);
+    background: rgba(0, 0, 0, 0.1);
 }
 
 .flow-player-overlay.hidden {
@@ -49,35 +49,53 @@
 }
 
 .flow-player-btn {
-    width: 88px;
-    height: 88px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
-    border: 2px solid rgba(200, 165, 92, 0.6);
-    background: rgba(200, 165, 92, 0.15);
-    color: #C9A84C;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.4s ease-out;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    padding-left: 6px;
+    transition: all 0.3s ease-out;
+    padding: 0;
 }
 
 .flow-player-btn:hover {
-    background: #C9A84C;
-    color: #050505;
-    border-color: #C9A84C;
-    transform: scale(1.1);
-    box-shadow: 0 0 60px rgba(200, 165, 92, 0.4);
+    background: rgba(0, 0, 0, 0.7);
+    transform: scale(1.08);
+    border-color: #fff;
 }
 
 .flow-player-label {
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: #C9A84C;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: #fff;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+}
+
+/* Mute X lines */
+.flow-mute-x {
+    stroke: currentColor;
+    stroke-width: 2;
+}
+
+/* Sound waves — animated pulse */
+.flow-sound-wave {
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+    animation: flowSoundPulse 1.2s ease-in-out infinite;
+}
+
+.flow-wave-2 {
+    animation-delay: 0.3s;
+}
+
+@keyframes flowSoundPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
 }
