@@ -72,16 +72,15 @@
 .flow-player-label-top {
     font-size: 1.1rem;
     font-weight: 700;
-    color: #fff;
+    color: #FF6240;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
 }
 
 .flow-player-label-bottom {
     font-size: 1rem;
     font-weight: 600;
-    color: #fff;
+    color: #FF6240;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
-    opacity: 0.9;
 }
 
 /* Sound waves — animated pulse */
