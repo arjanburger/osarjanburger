@@ -1224,6 +1224,262 @@ body:hover .cursor-glow {
 }
 
 /* ========================================
+   STICKY URGENCY BAR
+   ======================================== */
+.urgency-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1001;
+    background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+    padding: 10px 0;
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+}
+
+.urgency-bar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--bg-dark);
+}
+
+.urgency-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--bg-dark);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+.urgency-cta {
+    color: var(--bg-dark);
+    text-decoration: none;
+    font-weight: 700;
+    border-bottom: 1.5px solid var(--bg-dark);
+    padding-bottom: 1px;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+}
+
+.urgency-cta:hover { opacity: 0.7; }
+
+/* Push nav down for urgency bar */
+.nav { top: 38px; }
+.hero { padding-top: 38px; }
+
+/* ========================================
+   SHIMMER CTA ANIMATION
+   ======================================== */
+.btn-shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.25) 50%,
+        transparent 100%
+    );
+    animation: shimmer 4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% { left: -100%; }
+    50% { left: 150%; }
+}
+
+/* ========================================
+   MID-PAGE CTA
+   ======================================== */
+.section-midcta {
+    padding: 60px 0;
+    border-top: 1px solid rgba(200, 165, 92, 0.08);
+    border-bottom: 1px solid rgba(200, 165, 92, 0.08);
+}
+
+.midcta-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.midcta-content p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--text-soft);
+}
+
+/* ========================================
+   ROI TRANSFORMATION SECTION
+   ======================================== */
+.section-roi {
+    background: var(--bg-darker);
+}
+
+.roi-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 32px;
+    align-items: center;
+    margin-top: 64px;
+}
+
+.roi-card {
+    padding: 40px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.roi-card-before {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.roi-card-after {
+    background: rgba(200, 165, 92, 0.04);
+    border-color: rgba(200, 165, 92, 0.15);
+}
+
+.roi-card-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+}
+
+.roi-card-after .roi-card-label {
+    color: var(--gold);
+}
+
+.roi-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.roi-stat {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+}
+
+.roi-number {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+    flex-shrink: 0;
+    min-width: 80px;
+}
+
+.roi-number-muted {
+    color: var(--text-muted);
+}
+
+.roi-number-gold {
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.roi-desc {
+    font-size: 0.9rem;
+    color: var(--text-soft);
+    line-height: 1.5;
+}
+
+.roi-arrow {
+    color: var(--gold);
+    opacity: 0.4;
+}
+
+/* ========================================
+   OBJECTION HANDLING SECTION
+   ======================================== */
+.section-objections {
+    background: var(--bg-darker);
+}
+
+.objections-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-top: 64px;
+}
+
+.objection-card {
+    padding: 36px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.objection-card:hover {
+    border-color: rgba(200, 165, 92, 0.2);
+    background: rgba(200, 165, 92, 0.03);
+}
+
+.objection-card h3 {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--gold-light);
+    margin-bottom: 12px;
+}
+
+.objection-card p {
+    font-size: 0.9rem;
+    color: var(--text-soft);
+    line-height: 1.7;
+}
+
+/* ========================================
+   FORM ACCESS BADGE
+   ======================================== */
+.form-access-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    border-radius: 100px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #6fcf73;
+    margin-bottom: 16px;
+}
+
+.form-access-dot {
+    width: 6px;
+    height: 6px;
+    background: #4caf50;
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* ========================================
    RESPONSIVE
    ======================================== */
 @media (max-width: 1024px) {
@@ -1249,6 +1505,15 @@ body:hover .cursor-glow {
     }
     .hero-stats { gap: 24px; }
     .hero-stat-number, .hero-stat-suffix { font-size: 2rem; }
+    .roi-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .roi-arrow {
+        transform: rotate(90deg);
+        justify-self: center;
+    }
+    .objections-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 600px) {
@@ -1275,4 +1540,7 @@ body:hover .cursor-glow {
     .timeline-marker span { font-size: 0.85rem; }
     .timeline-item { gap: 20px; padding: 24px 0; }
     .footer-inner { flex-direction: column; gap: 12px; text-align: center; }
+    .urgency-bar-inner { font-size: 0.65rem; gap: 8px; flex-wrap: wrap; }
+    .roi-number { font-size: 2rem; min-width: 60px; }
+    .roi-card { padding: 28px; }
 }
