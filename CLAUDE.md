@@ -128,7 +128,9 @@ visitor_aliases mergt meerdere visitor_ids naar 1 persoon
 - **Taal**: UI is Nederlands, code/variabelen Engels
 - **CSS klassen**: `os-` prefix (os-panel, os-btn, os-stat-card, os-badge, os-table)
 - **Badge statussen**: `os-badge-active`, `os-badge-draft`, `os-badge-live`, `os-badge-lead`
-- **Periode filter**: `?period=1|7|30|90` (dagen), default 30
+- **Periode filter**: `?period=1|yesterday|7|30|90` (helper: `os/src/period.php` → `osPeriod()` + `osPeriodOptions()`)
+- **Daily-chart padding**: gebruik `osPadDailySeries($rows, $days)` zodat lege dagen 0 worden (anders ziet 7d/30d chart leeg)
+- **CSS cache**: `os.css` wordt geladen met `?v=filemtime()` — bij CSS edit gebeurt cache-bust automatisch, niets handmatig nodig
 - **Layout pattern**: View begint met PHP logic, dan `require layout.php`, dan HTML, sluit met `require layout-end.php`
 - **Forms**: POST naar zelfde URL, handler bovenaan file (voor output), redirect na succes
 - **Modals**: `<div class="os-modal" id="xxxModal">` met `.open` class toggle
@@ -136,12 +138,24 @@ visitor_aliases mergt meerdere visitor_ids naar 1 persoon
 
 ## Deployment
 
-Push naar `main` → Hostinger webhook → `deploy.php`:
+**OS dashboard / API / .htaccess** — push naar `main` → Hostinger webhook → `deploy.php`:
 1. `git pull origin main`
 2. Maak ontbrekende tabellen aan
 3. Voer kolom-migraties uit
 4. Maak admin user aan als die niet bestaat
 5. Seed product/page data + backfill tracking
+
+**Flow landing pages (Astro)** — source staat los in `/Users/arjanburger/Dev/flow-astro/`:
+```bash
+cd /Users/arjanburger/Dev/flow-astro && npm run deploy
+```
+Dit doet: `astro build` → rsync naar `ArjanBurgerOS/flow/public/` → commit + push osarjanburger → Hostinger webhook pullt → live op `flow.arjanburger.com`. Cache-bust voor CSS/JS gebeurt automatisch via Astro's hashed asset filenames in `/_astro/`.
+
+**Handmatig OS deploy triggeren** (bv. om te checken na push):
+```bash
+DEPLOY_SECRET=$(grep DEPLOY_SECRET .env | cut -d= -f2)
+curl -s "https://os.arjanburger.com/deploy.php?key=${DEPLOY_SECRET}"
+```
 
 ## Lokaal draaien
 
@@ -157,6 +171,8 @@ Draait via **Caddy + PHP-FPM** (brew services), NIET via `php -S`.
 /opt/homebrew/bin/brew services list | grep -E 'caddy|mysql|php'
 lsof -nP -iTCP:8093 -sTCP:LISTEN
 ```
+
+**Voor Claude verificatie via Preview MCP** (Chrome MCP blokkeert eigen-domein, Preview MCP wel oké op localhost): start de PHP dev-server via launch.json config `os-local` (`preview_start "os-local"`) → bereikbaar op `http://localhost:18093/os/dashboard`.
 
 | URL lokaal | URL productie | Wat |
 |---|---|---|
