@@ -90,7 +90,9 @@ try {
     $totalViews = db()->query("SELECT COUNT(*) FROM tracking_pageviews WHERE $periodSql $filterSql")->fetchColumn();
     $totalConversions = db()->query("SELECT COUNT(*) FROM tracking_conversions WHERE $periodSql $filterSql")->fetchColumn();
     $totalForms = db()->query("SELECT COUNT(*) FROM tracking_forms WHERE $periodSql $filterSql")->fetchColumn();
-    $conversionRate = $totalViews > 0 ? round(($totalConversions / $totalViews) * 100, 1) : 0;
+    // Conversie = form submit (lead). CTA-CTR = cta click-through-rate.
+    $conversionRate = $totalViews > 0 ? round(($totalForms / $totalViews) * 100, 1) : 0;
+    $ctaRate = $totalViews > 0 ? round(($totalConversions / $totalViews) * 100, 1) : 0;
     $avgTime = db()->query("SELECT AVG(seconds) FROM tracking_time WHERE $periodSql $filterSql")->fetchColumn();
 
     // Funnel
@@ -107,7 +109,7 @@ try {
     $dailyViews = db()->query("SELECT DATE(created_at) as date, COUNT(*) as views FROM tracking_pageviews WHERE $periodSql $filterSql GROUP BY DATE(created_at) ORDER BY date")->fetchAll();
 
 } catch (PDOException $e) {
-    $pages = []; $totalViews = 0; $totalConversions = 0; $totalForms = 0; $conversionRate = 0; $avgTime = 0;
+    $pages = []; $totalViews = 0; $totalConversions = 0; $totalForms = 0; $conversionRate = 0; $ctaRate = 0; $avgTime = 0;
     $funnelScroll50 = 0; $funnelVideoPlay = 0; $formStarts = 0; $leads = []; $dailyViews = [];
 }
 ?>
@@ -132,26 +134,31 @@ try {
 <?php endif; ?>
 
 <!-- KPI Stats -->
-<div class="os-stats-grid os-stats-5">
+<div class="os-stats-grid os-stats-6">
     <div class="os-stat-card">
         <div class="os-stat-label">Views</div>
         <div class="os-stat-value"><?= number_format($totalViews) ?></div>
         <div class="os-stat-sub"><?= $periodLabel ?></div>
     </div>
     <div class="os-stat-card">
-        <div class="os-stat-label">Conversies</div>
+        <div class="os-stat-label">CTA kliks</div>
         <div class="os-stat-value"><?= number_format($totalConversions) ?></div>
-        <div class="os-stat-sub">CTA clicks</div>
+        <div class="os-stat-sub">CTA-CTR <?= $ctaRate ?>%</div>
+    </div>
+    <div class="os-stat-card">
+        <div class="os-stat-label">Form submits</div>
+        <div class="os-stat-value"><?= number_format($totalForms) ?></div>
+        <div class="os-stat-sub">Leads via form</div>
     </div>
     <div class="os-stat-card">
         <div class="os-stat-label">Leads</div>
         <div class="os-stat-value"><?= number_format(count($leads)) ?></div>
-        <div class="os-stat-sub">Totaal</div>
+        <div class="os-stat-sub">Totaal in CRM</div>
     </div>
     <div class="os-stat-card">
         <div class="os-stat-label">Conversieratio</div>
         <div class="os-stat-value"><?= $conversionRate ?>%</div>
-        <div class="os-stat-sub">Views &rarr; CTA</div>
+        <div class="os-stat-sub">Views &rarr; lead</div>
     </div>
     <div class="os-stat-card">
         <div class="os-stat-label">Gem. tijd</div>

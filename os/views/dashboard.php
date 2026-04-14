@@ -69,14 +69,14 @@ try {
         <div class="os-stat-sub">
             vandaag
             <?php if ($viewsTrend !== 0): ?>
-                <span class="os-trend os-trend-<?= $viewsTrend >= 0 ? 'up' : 'down' ?>"><?= $viewsTrend > 0 ? '+' : '' ?><?= $viewsTrend ?>%</span>
+                <span class="os-trend os-trend-<?= $viewsTrend >= 0 ? 'up' : 'down' ?>" title="Vergelijk met gisteren (<?= number_format($yesterdayViews) ?> views)"><?= $viewsTrend > 0 ? '+' : '' ?><?= $viewsTrend ?>% vs gisteren</span>
             <?php endif; ?>
         </div>
     </div>
     <div class="os-stat-card">
-        <div class="os-stat-label">Conversies</div>
+        <div class="os-stat-label">CTA kliks</div>
         <div class="os-stat-value"><?= number_format($stats['conversions_today']) ?></div>
-        <div class="os-stat-sub">CTA clicks vandaag</div>
+        <div class="os-stat-sub">vandaag</div>
     </div>
     <div class="os-stat-card">
         <div class="os-stat-label">Leads</div>

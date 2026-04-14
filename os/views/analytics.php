@@ -38,7 +38,8 @@ try {
     $totalViews = array_sum(array_column($dailyViews, 'views'));
     $totalConversions = db()->query("SELECT COUNT(*) FROM tracking_conversions WHERE $periodSql $filterSql")->fetchColumn();
     $totalForms = db()->query("SELECT COUNT(*) FROM tracking_forms WHERE $periodSql $filterSql")->fetchColumn();
-    $conversionRate = $totalViews > 0 ? round(($totalConversions / $totalViews) * 100, 1) : 0;
+    $conversionRate = $totalViews > 0 ? round(($totalForms / $totalViews) * 100, 1) : 0;
+    $ctaRate = $totalViews > 0 ? round(($totalConversions / $totalViews) * 100, 1) : 0;
 
     // Top pagina's
     $topPages = db()->query("
@@ -194,7 +195,7 @@ try {
 
 } catch (PDOException $e) {
     $dailyViews = []; $topPages = []; $totalViews = 0; $totalConversions = 0; $totalForms = 0;
-    $conversionRate = 0; $scrollByDepth = []; $scrollTotal = 1; $timeData = []; $avgTime = 0;
+    $conversionRate = 0; $ctaRate = 0; $scrollByDepth = []; $scrollTotal = 1; $timeData = []; $avgTime = 0;
     $referrerData = []; $referrerTotal = 1; $campaigns = []; $deviceData = []; $deviceTotal = 1;
     $funnelViews = 0; $funnelScroll50 = 0; $funnelVideoPlay = 0; $funnelCta = 0; $funnelForm = 0; $ctaData = [];
     $videoPlays = 0; $videoCompletes = 0; $videoAvgWatch = 0; $videoCompletionRate = 0; $videoProgress = [];
@@ -227,19 +228,19 @@ try {
         <div class="os-stat-sub"><?= $periodLabel ?></div>
     </div>
     <div class="os-stat-card">
-        <div class="os-stat-label">Conversies</div>
+        <div class="os-stat-label">CTA kliks</div>
         <div class="os-stat-value"><?= number_format($totalConversions) ?></div>
-        <div class="os-stat-sub">CTA clicks</div>
+        <div class="os-stat-sub">CTA-CTR <?= $ctaRate ?>%</div>
     </div>
     <div class="os-stat-card">
         <div class="os-stat-label">Leads</div>
         <div class="os-stat-value"><?= number_format($totalForms) ?></div>
-        <div class="os-stat-sub">Formulieren</div>
+        <div class="os-stat-sub">Form submits</div>
     </div>
     <div class="os-stat-card">
         <div class="os-stat-label">Conversieratio</div>
         <div class="os-stat-value"><?= $conversionRate ?>%</div>
-        <div class="os-stat-sub">Views &rarr; CTA</div>
+        <div class="os-stat-sub">Views &rarr; lead</div>
     </div>
     <div class="os-stat-card">
         <div class="os-stat-label">Gem. tijd</div>
