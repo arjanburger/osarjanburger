@@ -50,4 +50,4 @@ RewriteRule ^$ os/public/index.php [L]
 RewriteCond %{HTTP_HOST} !^flow\. [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(login|verify|dashboard|clients|pages|products|analytics|logout)(.*)$ os/public/index.php [L,QSA]
+RewriteRule ^(login|verify|dashboard|clients|pages|products|analytics|search|logout)(.*)$ os/public/index.php [L,QSA]

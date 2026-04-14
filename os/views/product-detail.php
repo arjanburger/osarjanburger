@@ -108,8 +108,25 @@ try {
     // Daily views
     $dailyViews = db()->query("SELECT DATE(created_at) as date, COUNT(*) as views FROM tracking_pageviews WHERE $periodSql $filterSql GROUP BY DATE(created_at) ORDER BY date")->fetchAll();
 
+    // CTA performance: per (action, label) over alle gekoppelde pages
+    $ctaData = db()->query("
+        SELECT action, label, COUNT(*) as count, COUNT(DISTINCT visitor_id) as unique_clicks
+        FROM tracking_conversions
+        WHERE $periodSql $filterSql
+        GROUP BY action, label
+        ORDER BY count DESC
+        LIMIT 20
+    ")->fetchAll();
+    $ctaTotal = max(array_sum(array_column($ctaData, 'count')), 1);
+
+    // Scroll depth voor heatmap
+    $scrollData = db()->query("SELECT depth, COUNT(DISTINCT visitor_id) as count FROM tracking_scroll WHERE $periodSql $filterSql GROUP BY depth")->fetchAll();
+    $scrollByDepth = array_column($scrollData, 'count', 'depth');
+    $scrollTotal = max((int) db()->query("SELECT COUNT(DISTINCT visitor_id) FROM tracking_pageviews WHERE $periodSql $filterSql")->fetchColumn(), 1);
+
 } catch (PDOException $e) {
     $pages = []; $totalViews = 0; $totalConversions = 0; $totalForms = 0; $conversionRate = 0; $ctaRate = 0; $avgTime = 0;
+    $ctaData = []; $ctaTotal = 1; $scrollByDepth = []; $scrollTotal = 1;
     $funnelScroll50 = 0; $funnelVideoPlay = 0; $formStarts = 0; $leads = []; $dailyViews = [];
 }
 ?>
@@ -248,6 +265,71 @@ try {
                     </tbody>
                 </table>
             <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<div class="os-grid-2">
+    <!-- CTA performance -->
+    <div class="os-panel">
+        <div class="os-panel-header"><h2>CTA performance</h2></div>
+        <div class="os-panel-body">
+            <?php if (empty($ctaData)): ?>
+                <p class="os-empty">Nog geen CTA-kliks gemeten.</p>
+            <?php else: ?>
+                <table class="os-table">
+                    <thead><tr><th>Action</th><th>Label</th><th style="text-align:right">Kliks</th><th style="text-align:right">Uniek</th><th style="text-align:right">% van tot.</th></tr></thead>
+                    <tbody>
+                    <?php foreach ($ctaData as $cta):
+                        $pct = round(($cta['count'] / $ctaTotal) * 100, 1);
+                    ?>
+                        <tr>
+                            <td><code style="font-size:0.75rem"><?= htmlspecialchars($cta['action'] ?? '—') ?></code></td>
+                            <td><?= htmlspecialchars($cta['label'] ?? '—') ?></td>
+                            <td style="text-align:right"><strong><?= number_format($cta['count']) ?></strong></td>
+                            <td style="text-align:right"><?= number_format($cta['unique_clicks']) ?></td>
+                            <td style="text-align:right"><?= $pct ?>%</td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Scroll depth heatmap -->
+    <div class="os-panel">
+        <div class="os-panel-header"><h2>Scroll depth heatmap</h2></div>
+        <div class="os-panel-body">
+            <?php
+            $heat = [];
+            foreach ([25, 50, 75, 100] as $d) {
+                $count = $scrollByDepth[$d] ?? 0;
+                $heat[$d] = ['count' => $count, 'pct' => $scrollTotal > 0 ? round(($count / $scrollTotal) * 100) : 0];
+            }
+            ?>
+            <div style="display:flex;gap:1rem;align-items:stretch;height:240px">
+                <div style="flex:0 0 70px;display:flex;flex-direction:column;justify-content:space-between;font-size:0.7rem;color:var(--os-text-muted);text-align:right;padding:0.25rem 0;font-family:var(--os-font-label)">
+                    <span>0% top</span>
+                    <span>25%</span>
+                    <span>50%</span>
+                    <span>75%</span>
+                    <span>100% einde</span>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;border-radius:6px;overflow:hidden;border:1px solid var(--os-border)">
+                    <?php foreach ([25, 50, 75, 100] as $d):
+                        $pct = $heat[$d]['pct'];
+                        $hue = round($pct * 1.2); // 0=red, 120=green
+                        $alpha = max(0.15, $pct / 100);
+                    ?>
+                    <div style="flex:1;background:hsla(<?= $hue ?>, 60%, 45%, <?= $alpha ?>);display:flex;align-items:center;justify-content:space-between;padding:0 0.75rem;color:#fff;font-weight:600;font-size:0.85rem;text-shadow:0 1px 2px rgba(0,0,0,0.4)">
+                        <span>tot <?= $d ?>%</span>
+                        <span><?= $pct ?>% &middot; <?= number_format($heat[$d]['count']) ?> visitors</span>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <p style="font-size:0.75rem;color:var(--os-text-muted);margin-top:0.75rem">% van unieke pagebezoekers die deze diepte heeft bereikt. Hoe rooder, hoe meer drop-off.</p>
         </div>
     </div>
 </div>

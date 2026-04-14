@@ -112,6 +112,25 @@ try {
     $ctaData = []; $referrerData = []; $referrerTotal = 1; $deviceData = []; $deviceTotal = 1;
     $formAbandons = 0; $formAbandonRate = 0;
     $browserCounts = []; $osCounts = []; $uaDeviceCounts = []; $browserTotal = 1; $osTotal = 1;
+    $utmRows = [];
+}
+
+// UTM bronnen voor deze pagina
+try {
+    $utmRows = db()->query("
+        SELECT
+            COALESCE(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(utm_json, '$.source')),'null'),'(direct)') as source,
+            COALESCE(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(utm_json, '$.medium')),'null'),'—') as medium,
+            COALESCE(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(utm_json, '$.campaign')),'null'),'—') as campaign,
+            COUNT(*) as views
+        FROM tracking_pageviews
+        WHERE page_slug = " . db()->quote($slug) . " AND $periodSql
+        GROUP BY source, medium, campaign
+        ORDER BY views DESC
+        LIMIT 15
+    ")->fetchAll();
+} catch (PDOException $e) {
+    $utmRows = [];
 }
 ?>
 
@@ -303,22 +322,29 @@ try {
 </div>
 
 <div class="os-grid-2">
-    <!-- Scroll depth -->
+    <!-- Scroll depth heatmap -->
     <div class="os-panel">
-        <div class="os-panel-header"><h2>Scroll depth</h2></div>
+        <div class="os-panel-header"><h2>Scroll depth heatmap</h2></div>
         <div class="os-panel-body">
-            <?php foreach ([25, 50, 75, 100] as $depth):
-                $count = $scrollByDepth[$depth] ?? 0;
-                $pct = round(($count / $scrollTotal) * 100);
-            ?>
-            <div class="os-funnel-step">
-                <div class="os-funnel-label">
-                    <span><?= $depth ?>%</span>
-                    <span class="os-funnel-count"><?= number_format($count) ?> <span class="os-text-muted">(<?= $pct ?>%)</span></span>
+            <div style="display:flex;gap:1rem;align-items:stretch;height:240px">
+                <div style="flex:0 0 70px;display:flex;flex-direction:column;justify-content:space-between;font-size:0.7rem;color:var(--os-text-muted);text-align:right;padding:0.25rem 0;font-family:var(--os-font-label)">
+                    <span>0% top</span><span>25%</span><span>50%</span><span>75%</span><span>100% einde</span>
                 </div>
-                <div class="os-bar-track"><div class="os-bar-fill" style="width:<?= $pct ?>%;background:var(--os-accent)"></div></div>
+                <div style="flex:1;display:flex;flex-direction:column;border-radius:6px;overflow:hidden;border:1px solid var(--os-border)">
+                    <?php foreach ([25, 50, 75, 100] as $depth):
+                        $count = $scrollByDepth[$depth] ?? 0;
+                        $pct = round(($count / $scrollTotal) * 100);
+                        $hue = round($pct * 1.2);
+                        $alpha = max(0.15, $pct / 100);
+                    ?>
+                    <div style="flex:1;background:hsla(<?= $hue ?>, 60%, 45%, <?= $alpha ?>);display:flex;align-items:center;justify-content:space-between;padding:0 0.75rem;color:#fff;font-weight:600;font-size:0.85rem;text-shadow:0 1px 2px rgba(0,0,0,0.4)">
+                        <span>tot <?= $depth ?>%</span>
+                        <span><?= $pct ?>% &middot; <?= number_format($count) ?> visitors</span>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
             </div>
-            <?php endforeach; ?>
+            <p style="font-size:0.75rem;color:var(--os-text-muted);margin-top:0.75rem">% van bezoekers dat deze diepte heeft bereikt. Hoe rooder, hoe meer drop-off.</p>
         </div>
     </div>
 
@@ -342,6 +368,30 @@ try {
             </div>
             <?php endforeach; endif; ?>
         </div>
+    </div>
+</div>
+
+<!-- UTM bronnen voor deze pagina -->
+<div class="os-panel">
+    <div class="os-panel-header"><h2>UTM bronnen</h2></div>
+    <div class="os-panel-body">
+        <?php if (empty($utmRows)): ?>
+            <p class="os-empty">Geen UTM-tagged verkeer voor deze pagina.</p>
+        <?php else: ?>
+            <table class="os-table">
+                <thead><tr><th>Source</th><th>Medium</th><th>Campaign</th><th style="text-align:right">Views</th></tr></thead>
+                <tbody>
+                <?php foreach ($utmRows as $r): ?>
+                    <tr>
+                        <td><strong><?= htmlspecialchars($r['source']) ?></strong></td>
+                        <td><?= htmlspecialchars($r['medium']) ?></td>
+                        <td><?= htmlspecialchars($r['campaign']) ?></td>
+                        <td style="text-align:right"><?= number_format($r['views']) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
     </div>
 </div>
 

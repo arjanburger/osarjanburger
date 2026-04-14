@@ -106,6 +106,9 @@ switch ($uri) {
     case '/analytics':
         require $basePath . '/views/analytics.php';
         break;
+    case '/search':
+        require $basePath . '/views/search.php';
+        break;
     case '/logout':
         session_destroy();
         header('Location: ' . $urlPrefix . '/login');

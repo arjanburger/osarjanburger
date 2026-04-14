@@ -515,24 +515,28 @@ try {
 </div>
 
 <div class="os-grid-2">
-    <!-- Scroll depth -->
+    <!-- Scroll depth heatmap -->
     <div class="os-panel">
-        <div class="os-panel-header"><h2>Scroll depth</h2></div>
+        <div class="os-panel-header"><h2>Scroll depth heatmap</h2></div>
         <div class="os-panel-body">
-            <?php foreach ([25, 50, 75, 100] as $depth):
-                $count = $scrollByDepth[$depth] ?? 0;
-                $pct = round(($count / $scrollTotal) * 100);
-            ?>
-            <div class="os-funnel-step">
-                <div class="os-funnel-label">
-                    <span><?= $depth ?>%</span>
-                    <span class="os-funnel-count"><?= number_format($count) ?> <span class="os-text-muted">(<?= $pct ?>%)</span></span>
+            <div style="display:flex;gap:1rem;align-items:stretch;height:240px">
+                <div style="flex:0 0 70px;display:flex;flex-direction:column;justify-content:space-between;font-size:0.7rem;color:var(--os-text-muted);text-align:right;padding:0.25rem 0;font-family:var(--os-font-label)">
+                    <span>0% top</span><span>25%</span><span>50%</span><span>75%</span><span>100% einde</span>
                 </div>
-                <div class="os-bar-track">
-                    <div class="os-bar-fill" style="width:<?= $pct ?>%;background:var(--os-accent)"></div>
+                <div style="flex:1;display:flex;flex-direction:column;border-radius:6px;overflow:hidden;border:1px solid var(--os-border)">
+                    <?php foreach ([25, 50, 75, 100] as $depth):
+                        $count = $scrollByDepth[$depth] ?? 0;
+                        $pct = round(($count / $scrollTotal) * 100);
+                        $hue = round($pct * 1.2);
+                        $alpha = max(0.15, $pct / 100);
+                    ?>
+                    <div style="flex:1;background:hsla(<?= $hue ?>, 60%, 45%, <?= $alpha ?>);display:flex;align-items:center;justify-content:space-between;padding:0 0.75rem;color:#fff;font-weight:600;font-size:0.85rem;text-shadow:0 1px 2px rgba(0,0,0,0.4)">
+                        <span>tot <?= $depth ?>%</span>
+                        <span><?= $pct ?>% &middot; <?= number_format($count) ?> visitors</span>
+                    </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
-            <?php endforeach; ?>
         </div>
     </div>
 
