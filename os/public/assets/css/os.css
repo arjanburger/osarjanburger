@@ -572,9 +572,12 @@ body {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.5rem 0;
+    padding: 0.5rem 0.4rem;
     border-bottom: 1px solid var(--os-border-light);
+    border-radius: 4px;
+    transition: background 0.12s;
 }
+a.os-activity-item:hover { background: var(--os-surface-hover); }
 
 .os-activity-item:last-child { border-bottom: none; }
 

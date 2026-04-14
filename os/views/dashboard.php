@@ -65,9 +65,13 @@ try {
         ORDER BY created_at DESC LIMIT 15
     ")->fetchAll();
 
-    // Recente formulieren
+    // Recente formulieren — koppel ook aan client (via visitor_id, eventueel via aliases)
     $recentForms = db()->query("
-        SELECT tf.*, lp.title as page_title
+        SELECT tf.*, lp.title as page_title,
+            (SELECT c.id FROM clients c WHERE c.visitor_id = tf.visitor_id
+                OR c.visitor_id IN (SELECT alias_id FROM visitor_aliases WHERE canonical_id = tf.visitor_id)
+                OR c.visitor_id IN (SELECT canonical_id FROM visitor_aliases WHERE alias_id = tf.visitor_id)
+                LIMIT 1) as client_id
         FROM tracking_forms tf
         LEFT JOIN landing_pages lp ON tf.page_slug = lp.slug
         ORDER BY tf.created_at DESC LIMIT 5
@@ -201,8 +205,10 @@ function spark(array $data, string $color = 'var(--os-accent)'): string {
                     <tbody>
                     <?php foreach ($recentForms as $form):
                         $fields = json_decode($form['fields_json'], true) ?? [];
+                        $clickAttr = !empty($form['client_id']) ? "onclick=\"location.href='{$p}/clients/{$form['client_id']}'\" style=\"cursor:pointer\"" : '';
+                        $rowClass = !empty($form['client_id']) ? 'os-clickable-row' : '';
                     ?>
-                        <tr>
+                        <tr class="<?= $rowClass ?>" <?= $clickAttr ?>>
                             <td><?= date('d M H:i', strtotime($form['created_at'])) ?></td>
                             <td><?= htmlspecialchars($form['page_title'] ?? $form['page_slug']) ?></td>
                             <td><?= htmlspecialchars($fields['naam'] ?? '—') ?></td>
@@ -248,18 +254,29 @@ function spark(array $data, string $color = 'var(--os-accent)'): string {
                     elseif ($ago < 86400) $agoText = floor($ago/3600) . 'u geleden';
                     else $agoText = date('d M H:i', strtotime($act['created_at']));
                 ?>
-                    <div class="os-activity-item">
+                    <?php
+                        // Vind client voor deze visitor (incl aliases)
+                        $cid = null;
+                        if (!empty($act['visitor_id'])) {
+                            $cs = db()->prepare("SELECT id FROM clients WHERE visitor_id = ? OR visitor_id IN (SELECT alias_id FROM visitor_aliases WHERE canonical_id = ?) OR visitor_id IN (SELECT canonical_id FROM visitor_aliases WHERE alias_id = ?) LIMIT 1");
+                            $cs->execute([$act['visitor_id'], $act['visitor_id'], $act['visitor_id']]);
+                            $cid = $cs->fetchColumn() ?: null;
+                        }
+                        $href = $cid ? "{$p}/clients/{$cid}" : "{$p}/pages/" . urlencode($act['page_slug']);
+                    ?>
+                    <a class="os-activity-item" href="<?= htmlspecialchars($href) ?>" style="text-decoration:none;color:inherit;display:flex">
                         <div class="os-activity-dot" style="background:<?= $t['color'] ?>"></div>
                         <div class="os-activity-content">
                             <span class="os-activity-type"><?= $t['label'] ?></span>
                             <span class="os-activity-detail">/<?= htmlspecialchars($act['page_slug']) ?>
+                                <?php if ($cid): ?><span style="color:var(--os-accent);font-size:0.7rem;margin-left:0.3rem">→ lead</span><?php endif; ?>
                                 <?php if (!empty($act['detail']) && $act['type'] !== 'pageview'): ?>
                                     <span style="color:var(--os-text-muted);font-size:0.78rem">— <?= htmlspecialchars(mb_strimwidth((string)$act['detail'], 0, 60, '...')) ?></span>
                                 <?php endif; ?>
                             </span>
                             <span class="os-activity-time"><?= $agoText ?></span>
                         </div>
-                    </div>
+                    </a>
                 <?php endforeach; ?>
                 </div>
             <?php endif; ?>
