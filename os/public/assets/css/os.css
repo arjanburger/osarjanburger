@@ -295,6 +295,9 @@ body {
 .os-btn-danger:hover { background: #e74c3c; color: #fff; border-color: #e74c3c; }
 .os-btn-danger:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
 
+.os-spark { opacity: 0.8; }
+.os-stat-card .os-stat-label { display: flex; align-items: center; justify-content: space-between; }
+
 /* ── Toolbar ──────────────────────────────────────────── */
 .os-toolbar {
     display: flex;

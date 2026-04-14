@@ -193,6 +193,78 @@ try {
         ORDER BY fi.created_at DESC LIMIT 10
     ")->fetchAll();
 
+    // ── UTM attributie: views + leads per source/medium/campaign ──
+    $utmRows = db()->query("
+        SELECT
+            COALESCE(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(utm_json, '$.source')),'null'),'(direct)') as source,
+            COALESCE(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(utm_json, '$.medium')),'null'),'—') as medium,
+            COALESCE(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(utm_json, '$.campaign')),'null'),'—') as campaign,
+            COUNT(*) as views,
+            COUNT(DISTINCT visitor_id) as visitors
+        FROM tracking_pageviews
+        WHERE $periodSql $filterSql
+        GROUP BY source, medium, campaign
+        ORDER BY views DESC
+        LIMIT 20
+    ")->fetchAll();
+    // Leads per source via visitor_id join
+    foreach ($utmRows as &$r) {
+        $safeSource = db()->quote($r['source'] === '(direct)' ? '' : $r['source']);
+        $stmt = db()->prepare("
+            SELECT COUNT(DISTINCT tf.visitor_id)
+            FROM tracking_forms tf
+            JOIN tracking_pageviews tp ON tp.visitor_id = tf.visitor_id
+            WHERE tf.$periodSql $filterSql
+              AND COALESCE(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(tp.utm_json, '$.source')),'null'),'(direct)') = ?
+              AND COALESCE(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(tp.utm_json, '$.medium')),'null'),'—') = ?
+              AND COALESCE(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(tp.utm_json, '$.campaign')),'null'),'—') = ?
+        ");
+        $stmt->execute([$r['source'], $r['medium'], $r['campaign']]);
+        $r['leads'] = (int) $stmt->fetchColumn();
+        $r['conv_rate'] = $r['views'] > 0 ? round(($r['leads'] / $r['views']) * 100, 1) : 0;
+    }
+    unset($r);
+
+    // ── Time-to-lead (mediane uren van eerste visit tot form submit) ──
+    $ttlRow = db()->query("
+        SELECT TIMESTAMPDIFF(MINUTE, first_seen, tf.created_at) as mins
+        FROM tracking_forms tf
+        JOIN (
+            SELECT visitor_id, MIN(created_at) as first_seen
+            FROM tracking_pageviews GROUP BY visitor_id
+        ) fv ON fv.visitor_id = tf.visitor_id
+        WHERE tf.$periodSql $filterSql
+    ")->fetchAll(PDO::FETCH_COLUMN);
+    if (!empty($ttlRow)) {
+        sort($ttlRow);
+        $timeToLeadMin = (int) $ttlRow[(int)(count($ttlRow)/2)];
+    } else {
+        $timeToLeadMin = null;
+    }
+
+    // ── Bounce rate: unieke visitors met alleen pageview, geen scroll of CTA ──
+    $allVisitors = (int) db()->query("SELECT COUNT(DISTINCT visitor_id) FROM tracking_pageviews WHERE $periodSql $filterSql")->fetchColumn();
+    if ($allVisitors > 0) {
+        $engaged = (int) db()->query("
+            SELECT COUNT(DISTINCT pv.visitor_id)
+            FROM tracking_pageviews pv
+            WHERE pv.$periodSql $filterSql AND (
+                pv.visitor_id IN (SELECT visitor_id FROM tracking_scroll WHERE depth >= 25)
+                OR pv.visitor_id IN (SELECT visitor_id FROM tracking_conversions)
+                OR pv.visitor_id IN (SELECT visitor_id FROM tracking_forms)
+            )
+        ")->fetchColumn();
+        $bounceRate = round((($allVisitors - $engaged) / $allVisitors) * 100, 1);
+    } else {
+        $bounceRate = 0;
+    }
+
+    // ── Periode-vergelijking (vorige periode, zelfde lengte) ──
+    $prevViews = (int) db()->query("SELECT COUNT(*) FROM tracking_pageviews WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL " . ($periodDays * 2) . " DAY) AND created_at < DATE_SUB(CURDATE(), INTERVAL $periodDays DAY) $filterSql")->fetchColumn();
+    $prevForms = (int) db()->query("SELECT COUNT(*) FROM tracking_forms WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL " . ($periodDays * 2) . " DAY) AND created_at < DATE_SUB(CURDATE(), INTERVAL $periodDays DAY) $filterSql")->fetchColumn();
+    $viewsDelta = $prevViews > 0 ? round((($totalViews - $prevViews) / $prevViews) * 100) : 0;
+    $formsDelta = $prevForms > 0 ? round((($totalForms - $prevForms) / $prevForms) * 100) : 0;
+
 } catch (PDOException $e) {
     $dailyViews = []; $topPages = []; $totalViews = 0; $totalConversions = 0; $totalForms = 0;
     $conversionRate = 0; $ctaRate = 0; $scrollByDepth = []; $scrollTotal = 1; $timeData = []; $avgTime = 0;
@@ -201,6 +273,8 @@ try {
     $videoPlays = 0; $videoCompletes = 0; $videoAvgWatch = 0; $videoCompletionRate = 0; $videoProgress = [];
     $formStarts = 0; $formAbandons = 0; $formAbandonRate = 0; $abandonedForms = [];
     $browserCounts = []; $osCounts = []; $uaDeviceCounts = []; $browserTotal = 1; $osTotal = 1;
+    $utmRows = []; $timeToLeadMin = null; $bounceRate = 0;
+    $prevViews = 0; $prevForms = 0; $viewsDelta = 0; $formsDelta = 0;
 }
 ?>
 
@@ -221,11 +295,16 @@ try {
 </div>
 
 <!-- KPI Stats -->
-<div class="os-stats-grid os-stats-5">
+<div class="os-stats-grid os-stats-6">
     <div class="os-stat-card">
         <div class="os-stat-label">Views</div>
         <div class="os-stat-value"><?= number_format($totalViews) ?></div>
-        <div class="os-stat-sub"><?= $periodLabel ?></div>
+        <div class="os-stat-sub">
+            <?= $periodLabel ?>
+            <?php if ($viewsDelta !== 0): ?>
+                <span class="os-trend os-trend-<?= $viewsDelta >= 0 ? 'up' : 'down' ?>" title="Vorige <?= $periodDays ?>d: <?= number_format($prevViews) ?>"><?= $viewsDelta > 0 ? '+' : '' ?><?= $viewsDelta ?>%</span>
+            <?php endif; ?>
+        </div>
     </div>
     <div class="os-stat-card">
         <div class="os-stat-label">CTA kliks</div>
@@ -235,7 +314,12 @@ try {
     <div class="os-stat-card">
         <div class="os-stat-label">Leads</div>
         <div class="os-stat-value"><?= number_format($totalForms) ?></div>
-        <div class="os-stat-sub">Form submits</div>
+        <div class="os-stat-sub">
+            Form submits
+            <?php if ($formsDelta !== 0): ?>
+                <span class="os-trend os-trend-<?= $formsDelta >= 0 ? 'up' : 'down' ?>" title="Vorige <?= $periodDays ?>d: <?= number_format($prevForms) ?>"><?= $formsDelta > 0 ? '+' : '' ?><?= $formsDelta ?>%</span>
+            <?php endif; ?>
+        </div>
     </div>
     <div class="os-stat-card">
         <div class="os-stat-label">Conversieratio</div>
@@ -243,9 +327,19 @@ try {
         <div class="os-stat-sub">Views &rarr; lead</div>
     </div>
     <div class="os-stat-card">
-        <div class="os-stat-label">Gem. tijd</div>
-        <div class="os-stat-value"><?= $avgTime ? gmdate('i:s', (int)$avgTime) : '—' ?></div>
-        <div class="os-stat-sub">Op pagina</div>
+        <div class="os-stat-label">Bounce rate</div>
+        <div class="os-stat-value"><?= $bounceRate ?>%</div>
+        <div class="os-stat-sub">1 view, geen scroll/CTA</div>
+    </div>
+    <div class="os-stat-card">
+        <div class="os-stat-label">Time-to-lead</div>
+        <div class="os-stat-value">
+            <?php if ($timeToLeadMin === null): ?>—<?php
+                elseif ($timeToLeadMin < 60): ?><?= $timeToLeadMin ?>m<?php
+                elseif ($timeToLeadMin < 1440): ?><?= round($timeToLeadMin/60,1) ?>u<?php
+                else: ?><?= round($timeToLeadMin/1440,1) ?>d<?php endif; ?>
+        </div>
+        <div class="os-stat-sub">Mediaan visit&rarr;form</div>
     </div>
 </div>
 
@@ -464,6 +558,33 @@ try {
             </div>
             <?php endforeach; endif; ?>
         </div>
+    </div>
+</div>
+
+<!-- UTM Attributie -->
+<div class="os-panel">
+    <div class="os-panel-header"><h2>UTM attributie</h2></div>
+    <div class="os-panel-body">
+        <?php if (empty($utmRows)): ?>
+            <p class="os-empty">Nog geen UTM-verkeer. Tag je links met <code>?utm_source=…&amp;utm_medium=…&amp;utm_campaign=…</code> om bronnen te vergelijken.</p>
+        <?php else: ?>
+            <table class="os-table">
+                <thead><tr><th>Source</th><th>Medium</th><th>Campaign</th><th style="text-align:right">Views</th><th style="text-align:right">Visitors</th><th style="text-align:right">Leads</th><th style="text-align:right">Conv.</th></tr></thead>
+                <tbody>
+                <?php foreach ($utmRows as $r): ?>
+                    <tr>
+                        <td><strong><?= htmlspecialchars($r['source']) ?></strong></td>
+                        <td><?= htmlspecialchars($r['medium']) ?></td>
+                        <td><?= htmlspecialchars($r['campaign']) ?></td>
+                        <td style="text-align:right"><?= number_format($r['views']) ?></td>
+                        <td style="text-align:right"><?= number_format($r['visitors']) ?></td>
+                        <td style="text-align:right"><?= number_format($r['leads']) ?></td>
+                        <td style="text-align:right"><?= $r['conv_rate'] ?>%</td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
     </div>
 </div>
 

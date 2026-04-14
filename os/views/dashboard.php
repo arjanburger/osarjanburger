@@ -27,13 +27,20 @@ try {
     $fCta = $stats['conversions_today'];
     $fForm = $stats['forms_today'];
 
-    // Sparkline data (laatste 7 dagen pageviews)
-    $sparkline = db()->query("
-        SELECT DATE(created_at) as date, COUNT(*) as views
-        FROM tracking_pageviews
-        WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-        GROUP BY DATE(created_at) ORDER BY date
-    ")->fetchAll();
+    // Sparklines (laatste 7 dagen per metric, gevuld zodat gaten 0 worden)
+    $fillDays = function(array $rows) {
+        $byDate = array_column($rows, 'n', 'date');
+        $out = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $d = date('Y-m-d', strtotime("-$i day"));
+            $out[] = (int) ($byDate[$d] ?? 0);
+        }
+        return $out;
+    };
+    $sparkViews = $fillDays(db()->query("SELECT DATE(created_at) as date, COUNT(*) as n FROM tracking_pageviews WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) GROUP BY DATE(created_at)")->fetchAll());
+    $sparkCta   = $fillDays(db()->query("SELECT DATE(created_at) as date, COUNT(*) as n FROM tracking_conversions WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) GROUP BY DATE(created_at)")->fetchAll());
+    $sparkForms = $fillDays(db()->query("SELECT DATE(created_at) as date, COUNT(*) as n FROM tracking_forms WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) GROUP BY DATE(created_at)")->fetchAll());
+    $sparkline = $sparkViews; // backwards compat
 
     // Recente activiteit (mix van alles)
     $recentActivity = db()->query("
@@ -57,29 +64,44 @@ try {
     $stats = ['pageviews_today' => 0, 'conversions_today' => 0, 'forms_today' => 0, 'total_clients' => 0];
     $viewsTrend = 0; $avgScroll = 0; $avgTime = 0;
     $fViews = 0; $fScroll = 0; $fCta = 0; $fForm = 0;
-    $sparkline = []; $recentActivity = []; $recentForms = [];
+    $sparkline = []; $sparkViews = []; $sparkCta = []; $sparkForms = []; $recentActivity = []; $recentForms = [];
+}
+
+// Inline SVG sparkline helper (7 punten → polyline)
+function spark(array $data, string $color = 'var(--os-accent)'): string {
+    if (empty($data) || max($data) == 0) return '';
+    $max = max($data); $min = 0;
+    $w = 60; $h = 18;
+    $pts = [];
+    foreach ($data as $i => $v) {
+        $x = ($i / (count($data) - 1)) * $w;
+        $y = $h - (($v - $min) / ($max - $min ?: 1)) * $h;
+        $pts[] = round($x, 1) . ',' . round($y, 1);
+    }
+    $poly = implode(' ', $pts);
+    return '<svg class="os-spark" width="' . $w . '" height="' . $h . '" viewBox="0 0 ' . $w . ' ' . $h . '" style="vertical-align:middle;margin-left:0.4rem"><polyline fill="none" stroke="' . $color . '" stroke-width="1.5" stroke-linejoin="round" points="' . $poly . '"/></svg>';
 }
 ?>
 
 <!-- Stat cards -->
 <div class="os-stats-grid os-stats-6">
     <div class="os-stat-card">
-        <div class="os-stat-label">Pageviews</div>
+        <div class="os-stat-label">Pageviews<?= spark($sparkViews) ?></div>
         <div class="os-stat-value"><?= number_format($stats['pageviews_today']) ?></div>
         <div class="os-stat-sub">
             vandaag
             <?php if ($viewsTrend !== 0): ?>
-                <span class="os-trend os-trend-<?= $viewsTrend >= 0 ? 'up' : 'down' ?>" title="Vergelijk met gisteren (<?= number_format($yesterdayViews) ?> views)"><?= $viewsTrend > 0 ? '+' : '' ?><?= $viewsTrend ?>% vs gisteren</span>
+                <span class="os-trend os-trend-<?= $viewsTrend >= 0 ? 'up' : 'down' ?>" title="Gisteren: <?= number_format($yesterdayViews) ?> views"><?= $viewsTrend > 0 ? '+' : '' ?><?= $viewsTrend ?>% vs gisteren</span>
             <?php endif; ?>
         </div>
     </div>
     <div class="os-stat-card">
-        <div class="os-stat-label">CTA kliks</div>
+        <div class="os-stat-label">CTA kliks<?= spark($sparkCta, '#90ed7d') ?></div>
         <div class="os-stat-value"><?= number_format($stats['conversions_today']) ?></div>
         <div class="os-stat-sub">vandaag</div>
     </div>
     <div class="os-stat-card">
-        <div class="os-stat-label">Leads</div>
+        <div class="os-stat-label">Leads<?= spark($sparkForms, '#f7a35c') ?></div>
         <div class="os-stat-value"><?= number_format($stats['forms_today']) ?></div>
         <div class="os-stat-sub">Formulieren vandaag</div>
     </div>
