@@ -1,4 +1,6 @@
 <?php
+require_once dirname(__DIR__) . '/src/config.php';
+
 $productSlug = $routeParam ?? null;
 if (!$productSlug) { http_response_code(404); echo '404'; exit; }
 
@@ -9,6 +11,48 @@ try {
     if (!$product) { http_response_code(404); echo 'Product niet gevonden'; exit; }
 } catch (PDOException $e) {
     http_response_code(500); echo 'Database error'; exit;
+}
+
+// ── POST: pagina koppelen / ontkoppelen ────────────────────
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action'])) {
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['_csrf'] ?? '')) {
+        http_response_code(403); echo 'CSRF mismatch'; exit;
+    }
+    $action = $_POST['action'];
+    $pageSlug = strtolower(trim($_POST['page_slug'] ?? '', "/ \t\n\r\0\x0B"));
+    $p = defined('OS_URL_PREFIX') ? OS_URL_PREFIX : '';
+
+    if ($action === 'link_page' && $pageSlug !== '') {
+        $lp = db()->prepare("SELECT id FROM landing_pages WHERE slug = ?");
+        $lp->execute([$pageSlug]);
+        $lpId = $lp->fetchColumn();
+        if ($lpId) {
+            db()->prepare("UPDATE landing_pages SET product_id = ? WHERE id = ?")->execute([$product['id'], $lpId]);
+        } else {
+            db()->prepare("INSERT INTO landing_pages (title, slug, product_id, status) VALUES (?, ?, ?, 'live')")
+                ->execute([$pageSlug, $pageSlug, $product['id']]);
+        }
+        db()->prepare("UPDATE clients SET product_id = ? WHERE source_page = ? AND (product_id IS NULL OR product_id != ?)")
+            ->execute([$product['id'], $pageSlug, $product['id']]);
+    }
+    if ($action === 'unlink_page' && $pageSlug !== '') {
+        db()->prepare("UPDATE landing_pages SET product_id = NULL WHERE slug = ? AND product_id = ?")
+            ->execute([$pageSlug, $product['id']]);
+    }
+    header('Location: ' . $p . '/products/' . rawurlencode($productSlug)); exit;
+}
+
+// Beschikbare slugs om te koppelen (ongekoppelde pages + tracking slugs)
+try {
+    $available = db()->query("
+        SELECT slug FROM landing_pages WHERE product_id IS NULL
+        UNION
+        SELECT DISTINCT page_slug as slug FROM tracking_pageviews
+        WHERE page_slug != '' AND page_slug NOT IN (SELECT slug FROM landing_pages)
+        ORDER BY slug
+    ")->fetchAll(PDO::FETCH_COLUMN);
+} catch (PDOException $e) {
+    $available = [];
 }
 
 $pageTitle = htmlspecialchars($product['name']);
@@ -157,20 +201,41 @@ try {
 
     <!-- Landing pages -->
     <div class="os-panel">
-        <div class="os-panel-header"><h2>Landing pages (<?= count($pages) ?>)</h2></div>
+        <div class="os-panel-header" style="display:flex;justify-content:space-between;align-items:center">
+            <h2>Landing pages (<?= count($pages) ?>)</h2>
+            <form method="POST" action="<?= $p ?>/products/<?= htmlspecialchars($product['slug']) ?>" style="display:flex;gap:0.4rem;align-items:center">
+                <input type="hidden" name="_csrf" value="<?= $_SESSION['csrf_token'] ?>">
+                <input type="hidden" name="action" value="link_page">
+                <input type="text" name="page_slug" list="available-slugs" placeholder="slug koppelen (bv. doorbraakexclusive)" autocomplete="off" style="padding:0.4rem 0.6rem;font-size:0.85rem;border-radius:4px;border:1px solid var(--os-border);background:var(--os-surface);color:var(--os-text);min-width:260px">
+                <datalist id="available-slugs">
+                    <?php foreach ($available as $s): ?>
+                        <option value="<?= htmlspecialchars($s) ?>"></option>
+                    <?php endforeach; ?>
+                </datalist>
+                <button type="submit" class="os-btn os-btn-sm os-btn-primary">Koppelen</button>
+            </form>
+        </div>
         <div class="os-panel-body">
             <?php if (empty($pages)): ?>
-                <p class="os-empty">Geen landing pages gekoppeld. Koppel een page via het Pages overzicht.</p>
+                <p class="os-empty">Geen landing pages gekoppeld. Gebruik het koppelen-veld hierboven.</p>
             <?php else: ?>
                 <table class="os-table">
-                    <thead><tr><th>Pagina</th><th>Views</th><th>Conversies</th><th>Leads</th></tr></thead>
+                    <thead><tr><th>Pagina</th><th>Views</th><th>Conversies</th><th>Leads</th><th></th></tr></thead>
                     <tbody>
                     <?php foreach ($pages as $pg): ?>
-                        <tr class="os-clickable-row" onclick="location.href='<?= $p ?>/pages/<?= htmlspecialchars($pg['slug']) ?>'">
-                            <td><strong>/<?= htmlspecialchars($pg['slug']) ?></strong></td>
+                        <tr>
+                            <td class="os-clickable-row" onclick="location.href='<?= $p ?>/pages/<?= htmlspecialchars($pg['slug']) ?>'" style="cursor:pointer"><strong>/<?= htmlspecialchars($pg['slug']) ?></strong></td>
                             <td><?= number_format($pg['views']) ?></td>
                             <td><?= number_format($pg['conversions']) ?></td>
                             <td><?= number_format($pg['forms']) ?></td>
+                            <td style="text-align:right">
+                                <form method="POST" action="<?= $p ?>/products/<?= htmlspecialchars($product['slug']) ?>" onsubmit="return confirm('Pagina /<?= htmlspecialchars(addslashes($pg['slug'])) ?> ontkoppelen van dit product?')" style="display:inline">
+                                    <input type="hidden" name="_csrf" value="<?= $_SESSION['csrf_token'] ?>">
+                                    <input type="hidden" name="action" value="unlink_page">
+                                    <input type="hidden" name="page_slug" value="<?= htmlspecialchars($pg['slug']) ?>">
+                                    <button type="submit" class="os-btn os-btn-sm" title="Ontkoppel deze pagina">Ontkoppel</button>
+                                </form>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
