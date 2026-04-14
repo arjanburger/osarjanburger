@@ -1,0 +1,451 @@
+---
+import Base from '../layouts/Base.astro';
+import content from '../content/doorbraak.json';
+import '../styles/doorbraak.css';
+---
+<Base
+    title={content['meta.title']}
+    description={content['meta.description']}
+    pageSlug="doorbraak"
+>
+    <!-- Sticky Urgency Bar -->
+    <div class="urgency-bar" id="urgencyBar">
+        <div class="urgency-bar-inner">
+            <span class="urgency-dot"></span>
+            <span data-edit="urgency.text">{content['urgency.text']}</span>
+            <a href="#aanmelden" class="urgency-cta" data-edit="urgency.cta">{content['urgency.cta']}</a>
+        </div>
+    </div>
+
+    <!-- Cursor glow effect -->
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="container nav-inner">
+            <a href="#" class="nav-logo"><span data-edit="nav.logo">{content['nav.logo']}</span><span>.</span></a>
+            <a href="#aanmelden" class="nav-cta" data-edit="nav.cta">{content['nav.cta']}</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <canvas id="heroCanvas"></canvas>
+        <div class="hero-particles" id="heroParticles"></div>
+        <div class="container hero-content">
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                <span data-edit="hero.badge">{content['hero.badge']}</span>
+            </div>
+            <h1 class="hero-title">
+                <span class="hero-line">
+                    <span class="hero-word" data-delay="0" data-edit="hero.title.word1">{content['hero.title.word1']}</span>
+                    <span class="hero-word" data-delay="1" data-edit="hero.title.word2">{content['hero.title.word2']}</span>
+                </span>
+                <span class="hero-line">
+                    <span class="hero-word hero-word-accent" data-delay="2" data-edit="hero.title.word3">{content['hero.title.word3']}</span>
+                </span>
+            </h1>
+            <p class="hero-subtitle">
+                <span class="subtitle-line" data-edit="hero.subtitle.line1">{content['hero.subtitle.line1']}</span>
+                <span class="subtitle-line" data-edit="hero.subtitle.line2">{content['hero.subtitle.line2']}</span>
+            </p>
+            <div class="hero-actions">
+                <a href="#aanmelden" class="btn btn-glow btn-shimmer" data-flow-cta="hero-aanmelden">
+                    <span data-edit="hero.cta.primary">{content['hero.cta.primary']}</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+                <a href="#video" class="btn btn-ghost">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+                    <span data-edit="hero.cta.secondary">{content['hero.cta.secondary']}</span>
+                </a>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <span data-edit="hero.scroll">{content['hero.scroll']}</span>
+            <div class="hero-scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- Video Section -->
+    <section class="section-video-hero" id="video">
+        <div class="container">
+            <div class="video-wrapper reveal">
+                <div class="video-glow"></div>
+                <div class="flow-player" data-video={content['video.id']}></div>
+            </div>
+            <div class="hero-stats reveal">
+                <div class="hero-stat">
+                    <span class="hero-stat-number" data-target="500">0</span><span class="hero-stat-suffix">+</span>
+                    <span class="hero-stat-label" data-edit="stats.1.label">{content['stats.1.label']}</span>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number" data-target="5">0</span>
+                    <span class="hero-stat-label" data-edit="stats.2.label">{content['stats.2.label']}</span>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number" data-target="1">0</span>
+                    <span class="hero-stat-label" data-edit="stats.3.label">{content['stats.3.label']}</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="section section-dark">
+        <div class="container">
+            <div class="section-header reveal">
+                <p class="section-label" data-edit="pain.label">{content['pain.label']}</p>
+                <h2>
+                    <span data-edit="pain.title.before">{content['pain.title.before']}</span>
+                    <span class="text-gradient" data-edit="pain.title.accent">{content['pain.title.accent']}</span>
+                    <span data-edit="pain.title.after">{content['pain.title.after']}</span>
+                </h2>
+            </div>
+            <div class="pain-grid">
+                {[1,2,3,4].map((i) => (
+                    <div class="pain-card reveal">
+                        <div class="pain-card-number">{String(i).padStart(2,'0')}</div>
+                        <div class="pain-card-line"></div>
+                        <h3 data-edit={`pain.card${i}.title`}>{content[`pain.card${i}.title` as keyof typeof content]}</h3>
+                        <p data-edit={`pain.card${i}.text`}>{content[`pain.card${i}.text` as keyof typeof content]}</p>
+                    </div>
+                ))}
+            </div>
+            <div class="section-quote reveal">
+                <div class="quote-line"></div>
+                <p>
+                    <span data-edit="pain.quote.line1">{content['pain.quote.line1']}</span><br>
+                    <span data-edit="pain.quote.line2">{content['pain.quote.line2']}</span>
+                </p>
+                <div class="quote-line"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mid CTA 1 -->
+    <section class="section section-midcta">
+        <div class="container">
+            <div class="midcta-content reveal">
+                <p data-edit="midcta1.text">{content['midcta1.text']}</p>
+                <a href="#aanmelden" class="btn btn-glow btn-shimmer" data-flow-cta="mid-aanmelden">
+                    <span data-edit="midcta1.button">{content['midcta1.button']}</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Marquee -->
+    <div class="marquee">
+        <div class="marquee-track">
+            <span>Doorbraak</span><span class="marquee-dot"></span>
+            <span>Transformatie</span><span class="marquee-dot"></span>
+            <span>Impact</span><span class="marquee-dot"></span>
+            <span>Helderheid</span><span class="marquee-dot"></span>
+            <span>Groei</span><span class="marquee-dot"></span>
+            <span>Vrijheid</span><span class="marquee-dot"></span>
+            <span>Doorbraak</span><span class="marquee-dot"></span>
+            <span>Transformatie</span><span class="marquee-dot"></span>
+            <span>Impact</span><span class="marquee-dot"></span>
+            <span>Helderheid</span><span class="marquee-dot"></span>
+            <span>Groei</span><span class="marquee-dot"></span>
+            <span>Vrijheid</span><span class="marquee-dot"></span>
+        </div>
+    </div>
+
+    <!-- Program Section -->
+    <section class="section section-dark section-program">
+        <div class="container">
+            <div class="section-header reveal">
+                <p class="section-label" data-edit="program.label">{content['program.label']}</p>
+                <h2>
+                    <span data-edit="program.title.before">{content['program.title.before']}</span><br>
+                    <span class="text-gradient" data-edit="program.title.accent">{content['program.title.accent']}</span>
+                </h2>
+            </div>
+            <div class="timeline">
+                <div class="timeline-line"></div>
+                {[1,2,3,4,5].map((i) => (
+                    <div class="timeline-item reveal">
+                        <div class="timeline-marker">
+                            <span>{String(i).padStart(2,'0')}</span>
+                        </div>
+                        <div class="timeline-content">
+                            <h3 data-edit={`program.step${i}.title`}>{content[`program.step${i}.title` as keyof typeof content]}</h3>
+                            <p data-edit={`program.step${i}.text`}>{content[`program.step${i}.text` as keyof typeof content]}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </section>
+
+    <!-- ROI Section -->
+    <section class="section section-roi">
+        <div class="container">
+            <div class="section-header reveal">
+                <p class="section-label" data-edit="roi.label">{content['roi.label']}</p>
+                <h2>
+                    <span data-edit="roi.title.before">{content['roi.title.before']}</span><br>
+                    <span class="text-gradient" data-edit="roi.title.accent">{content['roi.title.accent']}</span>
+                </h2>
+            </div>
+            <div class="roi-grid">
+                <div class="roi-card roi-card-before reveal">
+                    <div class="roi-card-label" data-edit="roi.before.label">{content['roi.before.label']}</div>
+                    <div class="roi-stats">
+                        {[1,2,3].map((i) => (
+                            <div class="roi-stat">
+                                <span class="roi-number roi-number-muted" data-edit={`roi.before.stat${i}.number`}>{content[`roi.before.stat${i}.number` as keyof typeof content]}</span>
+                                <span class="roi-desc" data-edit={`roi.before.stat${i}.desc`}>{content[`roi.before.stat${i}.desc` as keyof typeof content]}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div class="roi-arrow reveal">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+                <div class="roi-card roi-card-after reveal">
+                    <div class="roi-card-label" data-edit="roi.after.label">{content['roi.after.label']}</div>
+                    <div class="roi-stats">
+                        {[1,2,3].map((i) => (
+                            <div class="roi-stat">
+                                <span class="roi-number roi-number-gold" data-edit={`roi.after.stat${i}.number`}>{content[`roi.after.stat${i}.number` as keyof typeof content]}</span>
+                                <span class="roi-desc" data-edit={`roi.after.stat${i}.desc`}>{content[`roi.after.stat${i}.desc` as keyof typeof content]}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- For Who -->
+    <section class="section section-split">
+        <div class="split-left">
+            <div class="split-content reveal">
+                <p class="section-label" data-edit="forwho.yes.label">{content['forwho.yes.label']}</p>
+                <ul class="icon-list icon-list-check">
+                    {[1,2,3,4,5].map((i) => (
+                        <li>
+                            <span class="icon-list-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            <span data-edit={`forwho.yes.item${i}`}>{content[`forwho.yes.item${i}` as keyof typeof content]}</span>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </div>
+        <div class="split-right">
+            <div class="split-content reveal">
+                <p class="section-label section-label-muted" data-edit="forwho.no.label">{content['forwho.no.label']}</p>
+                <ul class="icon-list icon-list-cross">
+                    {[1,2,3,4].map((i) => (
+                        <li>
+                            <span class="icon-list-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+                            <span data-edit={`forwho.no.item${i}`}>{content[`forwho.no.item${i}` as keyof typeof content]}</span>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="section section-dark">
+        <div class="container">
+            <div class="section-header reveal">
+                <p class="section-label" data-edit="social.label">{content['social.label']}</p>
+                <h2>
+                    <span data-edit="social.title.before">{content['social.title.before']}</span><br>
+                    <span data-edit="social.title.after">{content['social.title.after']}</span>
+                    <span class="text-gradient" data-edit="social.title.accent">{content['social.title.accent']}</span>
+                </h2>
+            </div>
+            <div class="testimonials">
+                {[
+                    { i: 1, featured: false, initial: 'M' },
+                    { i: 2, featured: true,  initial: 'S' },
+                    { i: 3, featured: false, initial: 'R' },
+                ].map(({ i, featured, initial }) => (
+                    <div class={`testimonial-card${featured ? ' testimonial-card-featured' : ''} reveal`}>
+                        <div class="testimonial-quote">&ldquo;</div>
+                        <p class="testimonial-text" data-edit={`social.t${i}.text`}>{content[`social.t${i}.text` as keyof typeof content]}</p>
+                        <div class="testimonial-author">
+                            <div class="testimonial-avatar"><span>{initial}</span></div>
+                            <div>
+                                <p class="testimonial-name" data-edit={`social.t${i}.name`}>{content[`social.t${i}.name` as keyof typeof content]}</p>
+                                <p class="testimonial-role" data-edit={`social.t${i}.role`}>{content[`social.t${i}.role` as keyof typeof content]}</p>
+                            </div>
+                        </div>
+                        <div class="testimonial-result">
+                            <span class="testimonial-result-number" data-edit={`social.t${i}.result.number`}>{content[`social.t${i}.result.number` as keyof typeof content]}</span>
+                            <span class="testimonial-result-label" data-edit={`social.t${i}.result.label`}>{content[`social.t${i}.result.label` as keyof typeof content]}</span>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </section>
+
+    <!-- Objections -->
+    <section class="section section-objections">
+        <div class="container">
+            <div class="section-header reveal">
+                <p class="section-label" data-edit="objections.label">{content['objections.label']}</p>
+                <h2>
+                    <span data-edit="objections.title.before">{content['objections.title.before']}</span>
+                    <span class="text-gradient" data-edit="objections.title.accent">{content['objections.title.accent']}</span>
+                </h2>
+            </div>
+            <div class="objections-grid">
+                {[1,2,3,4].map((i) => (
+                    <div class="objection-card reveal">
+                        <h3 data-edit={`objections.q${i}.title`}>{content[`objections.q${i}.title` as keyof typeof content]}</h3>
+                        <p data-edit={`objections.q${i}.text`}>{content[`objections.q${i}.text` as keyof typeof content]}</p>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </section>
+
+    <!-- Mid CTA 2 -->
+    <section class="section section-midcta">
+        <div class="container">
+            <div class="midcta-content reveal">
+                <p data-edit="midcta2.text">{content['midcta2.text']}</p>
+                <a href="#aanmelden" class="btn btn-glow btn-shimmer" data-flow-cta="post-objection-aanmelden">
+                    <span data-edit="midcta2.button">{content['midcta2.button']}</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Signup -->
+    <section class="section section-signup" id="aanmelden">
+        <div class="signup-bg-glow"></div>
+        <div class="container">
+            <div class="signup-wrapper">
+                <div class="signup-content reveal">
+                    <p class="section-label" data-edit="signup.label">{content['signup.label']}</p>
+                    <h2>
+                        <span data-edit="signup.title.before">{content['signup.title.before']}</span><br>
+                        <span class="text-gradient" data-edit="signup.title.accent">{content['signup.title.accent']}</span><span data-edit="signup.title.q">{content['signup.title.q']}</span>
+                    </h2>
+                    <p class="signup-text" data-edit="signup.text">{content['signup.text']}</p>
+                    <div class="signup-features">
+                        <div class="signup-feature">
+                            <div class="signup-feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                            </div>
+                            <div>
+                                <strong data-edit="signup.feature1.title">{content['signup.feature1.title']}</strong>
+                                <p data-edit="signup.feature1.text">{content['signup.feature1.text']}</p>
+                            </div>
+                        </div>
+                        <div class="signup-feature">
+                            <div class="signup-feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            </div>
+                            <div>
+                                <strong data-edit="signup.feature2.title">{content['signup.feature2.title']}</strong>
+                                <p data-edit="signup.feature2.text">{content['signup.feature2.text']}</p>
+                            </div>
+                        </div>
+                        <div class="signup-feature">
+                            <div class="signup-feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                            </div>
+                            <div>
+                                <strong data-edit="signup.feature3.title">{content['signup.feature3.title']}</strong>
+                                <p data-edit="signup.feature3.text">{content['signup.feature3.text']}</p>
+                            </div>
+                        </div>
+                        <div class="signup-feature">
+                            <div class="signup-feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                            </div>
+                            <div>
+                                <strong data-edit="signup.feature4.title">{content['signup.feature4.title']}</strong>
+                                <p data-edit="signup.feature4.text">{content['signup.feature4.text']}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="signup-form-wrapper reveal">
+                    <form class="signup-form" id="signup-form" data-flow-form="doorbraak-aanmelding">
+                        <div class="form-header">
+                            <div class="form-access-badge">
+                                <span class="form-access-dot"></span>
+                                <span data-edit="signup.form.badge">{content['signup.form.badge']}</span>
+                            </div>
+                            <h3 data-edit="signup.form.title">{content['signup.form.title']}</h3>
+                            <p data-edit="signup.form.subtitle">{content['signup.form.subtitle']}</p>
+                        </div>
+                        <div class="form-body">
+                            <div class="form-group">
+                                <input type="text" id="naam" name="naam" placeholder=" " required>
+                                <label for="naam">Volledige naam</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" id="email" name="email" placeholder=" " required>
+                                <label for="email">E-mailadres</label>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <input type="tel" id="telefoon" name="telefoon" placeholder=" ">
+                                    <label for="telefoon">Telefoon</label>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" id="bedrijf" name="bedrijf" placeholder=" ">
+                                    <label for="bedrijf">Bedrijf</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <textarea id="bericht" name="bericht" rows="3" placeholder=" "></textarea>
+                                <label for="bericht">Wat is je grootste uitdaging?</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-glow btn-full">
+                            <span data-edit="signup.form.button">{content['signup.form.button']}</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="section section-final">
+        <div class="container">
+            <div class="final-content reveal">
+                <h2>
+                    <span data-edit="final.title.before">{content['final.title.before']}</span><br>
+                    <span class="text-gradient" data-edit="final.title.accent">{content['final.title.accent']}</span>
+                </h2>
+                <p>
+                    <span data-edit="final.text.line1">{content['final.text.line1']}</span><br>
+                    <span data-edit="final.text.line2">{content['final.text.line2']}</span>
+                </p>
+                <a href="#aanmelden" class="btn btn-glow btn-shimmer btn-large" data-flow-cta="final-aanmelden">
+                    <span data-edit="final.button">{content['final.button']}</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <a href="#" class="footer-logo"><span data-edit="footer.logo">{content['footer.logo']}</span><span>.</span></a>
+            <p data-edit="footer.copy">{content['footer.copy']}</p>
+        </div>
+    </footer>
+
+    <script slot="scripts" is:inline src="/js/doorbraak.js"></script>
+</Base>
