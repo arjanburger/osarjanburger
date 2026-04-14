@@ -7,7 +7,7 @@ $clients = $products = $pages = $ctas = [];
 if ($q !== '') {
     $like = '%' . $q . '%';
     try {
-        $stmt = db()->prepare("SELECT id, name, email, telefoon, source_page, status FROM clients WHERE name LIKE ? OR email LIKE ? OR telefoon LIKE ? ORDER BY created_at DESC LIMIT 25");
+        $stmt = db()->prepare("SELECT id, name, email, phone, source_page, status FROM clients WHERE name LIKE ? OR email LIKE ? OR phone LIKE ? ORDER BY created_at DESC LIMIT 25");
         $stmt->execute([$like, $like, $like]);
         $clients = $stmt->fetchAll();
 
@@ -44,7 +44,7 @@ $total = count($clients) + count($products) + count($pages) + count($ctas);
                 <tr class="os-clickable-row" onclick="location.href='<?= $p ?>/clients/<?= $c['id'] ?>'">
                     <td><strong><?= htmlspecialchars($c['name']) ?></strong></td>
                     <td><?= htmlspecialchars($c['email'] ?? '—') ?></td>
-                    <td><?= htmlspecialchars($c['telefoon'] ?? '—') ?></td>
+                    <td><?= htmlspecialchars($c['phone'] ?? '—') ?></td>
                     <td><?php if ($c['source_page']): ?><code><?= htmlspecialchars($c['source_page']) ?></code><?php else: ?>—<?php endif; ?></td>
                     <td><span class="os-badge os-badge-<?= htmlspecialchars($c['status']) ?>"><?= htmlspecialchars($c['status']) ?></span></td>
                 </tr>
