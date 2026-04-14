@@ -146,7 +146,10 @@ try {
                 <a href="<?= $p ?>/products/<?= htmlspecialchars($landingPage['product_slug']) ?>" class="os-badge os-badge-active"><?= htmlspecialchars($landingPage['product_name']) ?></a>
             <?php endif; ?>
             <?php if ($landingPage['url']): ?>
-                <a href="<?= htmlspecialchars($landingPage['url']) ?>" target="_blank" class="os-btn os-btn-sm">Bekijken &nearr;</a>
+                <?php
+                    $previewUrl = $landingPage['url'] . (str_contains($landingPage['url'], '?') ? '&' : '?') . '_track=0';
+                ?>
+                <a href="<?= htmlspecialchars($previewUrl) ?>" target="_blank" class="os-btn os-btn-sm" title="Opent met tracking uit (bekijken-modus)">Bekijken &nearr;</a>
             <?php endif; ?>
         <?php endif; ?>
     </div>
