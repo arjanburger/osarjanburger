@@ -42,14 +42,20 @@ try {
     $sparkForms = $fillDays(db()->query("SELECT DATE(created_at) as date, COUNT(*) as n FROM tracking_forms WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) GROUP BY DATE(created_at)")->fetchAll());
     $sparkline = $sparkViews; // backwards compat
 
-    // Recente activiteit (mix van alles)
+    // Recente activiteit (mix van alle event-types)
     $recentActivity = db()->query("
-        (SELECT 'pageview' as type, page_slug, visitor_id, url as detail, created_at FROM tracking_pageviews ORDER BY created_at DESC LIMIT 5)
+        (SELECT 'pageview' as type, page_slug, visitor_id, url as detail, created_at FROM tracking_pageviews ORDER BY created_at DESC LIMIT 8)
         UNION ALL
-        (SELECT 'conversion' as type, page_slug, visitor_id, CONCAT(action, ': ', label) as detail, created_at FROM tracking_conversions ORDER BY created_at DESC LIMIT 5)
+        (SELECT 'conversion' as type, page_slug, visitor_id, CONCAT(COALESCE(action,'cta'), ': ', COALESCE(label,'-')) as detail, created_at FROM tracking_conversions ORDER BY created_at DESC LIMIT 8)
         UNION ALL
-        (SELECT 'form' as type, page_slug, visitor_id, form_id as detail, created_at FROM tracking_forms ORDER BY created_at DESC LIMIT 5)
-        ORDER BY created_at DESC LIMIT 10
+        (SELECT 'form' as type, page_slug, visitor_id, COALESCE(form_id,'form') as detail, created_at FROM tracking_forms ORDER BY created_at DESC LIMIT 8)
+        UNION ALL
+        (SELECT 'scroll' as type, page_slug, visitor_id, CONCAT('depth ', depth, '%') as detail, created_at FROM tracking_scroll ORDER BY created_at DESC LIMIT 8)
+        UNION ALL
+        (SELECT 'form_int' as type, page_slug, visitor_id, CONCAT(event, ' (', field_count, ' velden)') as detail, created_at FROM tracking_form_interactions ORDER BY created_at DESC LIMIT 8)
+        UNION ALL
+        (SELECT 'video' as type, page_slug, visitor_id, CONCAT(event, ' @', COALESCE(seconds_watched,0), 's') as detail, created_at FROM tracking_video ORDER BY created_at DESC LIMIT 8)
+        ORDER BY created_at DESC LIMIT 15
     ")->fetchAll();
 
     // Recente formulieren
@@ -218,7 +224,14 @@ function spark(array $data, string $color = 'var(--os-accent)'): string {
             <?php else: ?>
                 <div class="os-activity-feed">
                 <?php foreach ($recentActivity as $act):
-                    $typeMap = ['pageview' => ['icon' => 'eye', 'label' => 'View', 'color' => 'var(--os-accent)'], 'conversion' => ['icon' => 'zap', 'label' => 'CTA', 'color' => '#90ed7d'], 'form' => ['icon' => 'mail', 'label' => 'Lead', 'color' => '#f7a35c']];
+                    $typeMap = [
+                        'pageview' => ['label' => 'View', 'color' => 'var(--os-accent)'],
+                        'conversion' => ['label' => 'CTA', 'color' => '#90ed7d'],
+                        'form' => ['label' => 'Lead', 'color' => '#f7a35c'],
+                        'scroll' => ['label' => 'Scroll', 'color' => '#5b9fcc'],
+                        'form_int' => ['label' => 'Form', 'color' => '#b07ad4'],
+                        'video' => ['label' => 'Video', 'color' => '#ff6240'],
+                    ];
                     $t = $typeMap[$act['type']] ?? $typeMap['pageview'];
                     $ago = time() - strtotime($act['created_at']);
                     if ($ago < 60) $agoText = $ago . 's geleden';
@@ -230,7 +243,11 @@ function spark(array $data, string $color = 'var(--os-accent)'): string {
                         <div class="os-activity-dot" style="background:<?= $t['color'] ?>"></div>
                         <div class="os-activity-content">
                             <span class="os-activity-type"><?= $t['label'] ?></span>
-                            <span class="os-activity-detail">/<?= htmlspecialchars($act['page_slug']) ?></span>
+                            <span class="os-activity-detail">/<?= htmlspecialchars($act['page_slug']) ?>
+                                <?php if (!empty($act['detail']) && $act['type'] !== 'pageview'): ?>
+                                    <span style="color:var(--os-text-muted);font-size:0.78rem">— <?= htmlspecialchars(mb_strimwidth((string)$act['detail'], 0, 60, '...')) ?></span>
+                                <?php endif; ?>
+                            </span>
                             <span class="os-activity-time"><?= $agoText ?></span>
                         </div>
                     </div>

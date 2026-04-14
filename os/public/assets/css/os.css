@@ -777,30 +777,34 @@ code {
 
 .os-form-field-value { color: var(--os-text); }
 
-/* ── Period filter ───────────────────────────────────── */
+/* ── Period filter (segmented control) ──────────────── */
 .os-period-filter {
-    display: flex;
-    gap: 0.25rem;
-    background: var(--os-bg);
-    border-radius: var(--os-radius);
-    padding: 0.2rem;
+    display: inline-flex;
+    background: var(--os-bg-2, #14171c);
+    border: 1px solid var(--os-border);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 0;
 }
 
 .os-period-btn {
-    padding: 0.35rem 0.75rem;
+    padding: 0.4rem 0.85rem;
     border: none;
     background: transparent;
     color: var(--os-text-muted);
-    font-size: 0.8rem;
-    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-family: var(--os-font-label, inherit);
+    letter-spacing: 0.04em;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.15s;
     text-decoration: none;
+    line-height: 1;
 }
 
-.os-period-btn:hover { color: var(--os-text); }
-.os-period-btn.active { background: var(--os-accent-dim); color: var(--os-accent); font-weight: 600; }
+.os-period-btn:hover { color: var(--os-text); background: rgba(255,255,255,0.03); }
+.os-period-btn.active { background: var(--os-accent); color: var(--os-bg); }
 
 /* ── Responsive ───────────────────────────────────────── */
 @media (max-width: 1200px) {

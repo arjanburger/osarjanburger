@@ -58,10 +58,10 @@ try {
 $pageTitle = htmlspecialchars($product['name']);
 require __DIR__ . '/layout.php';
 
-$period = $_GET['period'] ?? '30';
-$periodDays = match($period) { '1' => 1, '7' => 7, '90' => 90, default => 30 };
-$periodSql = "created_at >= DATE_SUB(CURDATE(), INTERVAL $periodDays DAY)";
-$periodLabel = match($period) { '1' => 'Vandaag', '7' => '7 dagen', '90' => '90 dagen', default => '30 dagen' };
+require_once dirname(__DIR__) . '/src/period.php';
+$P = osPeriod($_GET['period'] ?? '30');
+$period = $P['period']; $periodDays = $P['days']; $periodLabel = $P['label'];
+$periodSql = $P['sql'];
 
 try {
     // Landing pages van dit product
@@ -107,6 +107,7 @@ try {
 
     // Daily views
     $dailyViews = db()->query("SELECT DATE(created_at) as date, COUNT(*) as views FROM tracking_pageviews WHERE $periodSql $filterSql GROUP BY DATE(created_at) ORDER BY date")->fetchAll();
+    $dailyViews = osPadDailySeries($dailyViews, $periodDays);
 
     // CTA performance: per (action, label) over alle gekoppelde pages
     $ctaData = db()->query("
@@ -139,7 +140,7 @@ try {
         <span class="os-badge os-badge-<?= htmlspecialchars($product['status']) ?>"><?= htmlspecialchars($product['status']) ?></span>
     </div>
     <div class="os-period-filter">
-        <?php foreach (['1' => 'Vandaag', '7' => '7d', '30' => '30d', '90' => '90d'] as $pVal => $pLabel): ?>
+        <?php foreach (osPeriodOptions() as $pVal => $pLabel): ?>
             <a href="<?= $p ?>/products/<?= htmlspecialchars($productSlug) ?>?period=<?= $pVal ?>"
                class="os-period-btn <?= $period === $pVal ? 'active' : '' ?>"><?= $pLabel ?></a>
         <?php endforeach; ?>
