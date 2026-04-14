@@ -290,6 +290,10 @@ body {
 .os-btn-primary { background: var(--os-accent); color: var(--os-bg); border-color: var(--os-accent); font-family: var(--os-font-label); font-weight: 700; letter-spacing: 0.04em; }
 .os-btn-primary:hover { background: var(--os-accent-hover); }
 .os-btn-sm { padding: 0.35rem 0.7rem; font-size: 0.8rem; }
+.os-btn-icon { padding: 0.35rem; border-radius: 4px; }
+.os-btn-danger { background: rgba(231, 76, 60, 0.08); color: #e74c3c; border-color: rgba(231, 76, 60, 0.3); }
+.os-btn-danger:hover { background: #e74c3c; color: #fff; border-color: #e74c3c; }
+.os-btn-danger:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
 
 /* ── Toolbar ──────────────────────────────────────────── */
 .os-toolbar {

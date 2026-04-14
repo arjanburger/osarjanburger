@@ -8,8 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['title']) && !empty($
     }
     require_once dirname(__DIR__) . '/src/config.php';
     try {
+        $slug = strtolower(trim($_POST['slug'] ?? '', "/ \t\n\r\0\x0B"));
         $stmt = db()->prepare("INSERT INTO landing_pages (title, slug, url, product_id, status) VALUES (?, ?, ?, ?, 'draft')");
-        $stmt->execute([$_POST['title'], $_POST['slug'], $_POST['url'] ?? null, $_POST['product_id'] ?: null]);
+        $stmt->execute([$_POST['title'], $slug, $_POST['url'] ?? null, $_POST['product_id'] ?: null]);
         $p = defined('OS_URL_PREFIX') ? OS_URL_PREFIX : '';
         header('Location: ' . $p . '/pages');
         exit;
