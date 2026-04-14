@@ -25,16 +25,19 @@ php -S 127.0.0.1:18093 router.php
 | `http://127.0.0.1:18093/os/dashboard` | Dashboard |
 | `http://127.0.0.1:18093/api/health` | API health check |
 | `http://127.0.0.1:18093/flow/doorbraak/` | Legacy static landing page (`flow/public/`) |
-| `http://127.0.0.1:8101/doorbraak` | Flow Astro — **definitieve versie** (build uit `flow/astro/dist/`, geen editor) |
-| `http://127.0.0.1:8102/doorbraak` | Flow Astro — **editable versie** (dev server via Caddy → `127.0.0.1:18102`, inline editor) |
+| `http://127.0.0.1:18102/doorbraak` | Flow Astro dev server (source in `Dev/flow-astro/`, inline editor) |
+| `http://127.0.0.1:18093/flow/doorbraak/` | Built output (serveert `flow/public/`, geen editor) |
 
-### Flow Astro (nieuwe landing page setup)
-- Bron: `flow/astro/` (Astro 6, static output)
-- **Static build** (definitief): `cd flow/astro && npm run build` → `dist/` — Caddy `:8101` + hostname `flow.dev`
-- **Dev + editor**: `cd flow/astro && npm run dev` (port 18102) — Caddy `:8102` + hostname `flow-edit.dev`
-- Content bestanden: `flow/astro/src/content/{doorbraak,doorbraakexclusive}.json`
-- Editor: `?edit=true` of EDIT-knop → contenteditable → blur → POST `/api/save-content` (alleen in dev)
-- Build-script stript `data-edit` attributen en `edit-mode.js` uit `dist/` voor de definitieve versie
+### Flow Astro (landing pages)
+- **Source repo**: `/Users/arjanburger/Dev/flow-astro/` (eigen git repo, los van osarjanburger) — Astro 6, static output
+- **Build output**: `ArjanBurgerOS/flow/public/` (via rsync in build script) — dit is wat Hostinger pullt
+- **Build + deploy flow**:
+  1. `cd /Users/arjanburger/Dev/flow-astro && npm run build` → rsynct naar `../ArjanBurgerOS/flow/public/`
+  2. `cd ArjanBurgerOS && git add flow/public && git commit && git push origin main`
+  3. Hostinger webhook pullt → live op `flow.arjanburger.com`
+- **Dev + editor**: `cd /Users/arjanburger/Dev/flow-astro && npm run dev` (port 18102) — inline editor via `?edit=true` of EDIT-knop → contenteditable → blur → POST `/api/save-content` (alleen in dev)
+- Content bestanden: `flow-astro/src/content/{doorbraak,doorbraakexclusive}.json`
+- Build-script stript `data-edit` attributen en `edit-mode.js` uit `dist/`, behoudt `flow/public/deploy.php` via rsync `--exclude`
 
 ## Database
 

@@ -22,3 +22,4 @@ node_modules/
 
 # Claude (settings lokaal, docs+skills in git)
 .claude/settings.local.json
+flow/astro/
