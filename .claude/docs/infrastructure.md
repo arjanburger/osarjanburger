@@ -24,7 +24,17 @@ php -S 127.0.0.1:18093 router.php
 |---|---|
 | `http://127.0.0.1:18093/os/dashboard` | Dashboard |
 | `http://127.0.0.1:18093/api/health` | API health check |
-| `http://127.0.0.1:18093/flow/doorbraak/` | Landing page |
+| `http://127.0.0.1:18093/flow/doorbraak/` | Legacy static landing page (`flow/public/`) |
+| `http://127.0.0.1:8101/doorbraak` | Flow Astro — **definitieve versie** (build uit `flow/astro/dist/`, geen editor) |
+| `http://127.0.0.1:8102/doorbraak` | Flow Astro — **editable versie** (dev server via Caddy → `127.0.0.1:18102`, inline editor) |
+
+### Flow Astro (nieuwe landing page setup)
+- Bron: `flow/astro/` (Astro 6, static output)
+- **Static build** (definitief): `cd flow/astro && npm run build` → `dist/` — Caddy `:8101` + hostname `flow.dev`
+- **Dev + editor**: `cd flow/astro && npm run dev` (port 18102) — Caddy `:8102` + hostname `flow-edit.dev`
+- Content bestanden: `flow/astro/src/content/{doorbraak,doorbraakexclusive}.json`
+- Editor: `?edit=true` of EDIT-knop → contenteditable → blur → POST `/api/save-content` (alleen in dev)
+- Build-script stript `data-edit` attributen en `edit-mode.js` uit `dist/` voor de definitieve versie
 
 ## Database
 

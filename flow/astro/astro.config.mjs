@@ -64,11 +64,14 @@ function saveContentPlugin() {
 
 export default defineConfig({
   site: 'https://flow.arjanburger.com',
-  server: { port: 18200, host: '127.0.0.1' },
+  server: { port: 18102, host: '127.0.0.1' },
   build: { format: 'directory' },
   trailingSlash: 'ignore',
 
   vite: {
     plugins: [saveContentPlugin()],
+    // Voorkom HMR full-reload bij elke editor-save: de DOM heeft de nieuwe waarde
+    // al uit de contenteditable, en de JSON-write hoeft geen page reload te triggeren.
+    server: { watch: { ignored: ['**/src/content/**'] } },
   },
 });

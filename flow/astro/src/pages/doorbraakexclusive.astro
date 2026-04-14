@@ -1,0 +1,331 @@
+---
+import Base from '../layouts/Base.astro';
+import content from '../content/doorbraakexclusive.json';
+import '../styles/doorbraakexclusive.css';
+---
+<Base
+    title={content['meta.title']}
+    description={content['meta.description']}
+    pageSlug="doorbraakexclusive"
+>
+    <link slot="head" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Sticky Top Bar -->
+    <div class="top-bar" id="topBar">
+        <div class="top-bar-inner">
+            <div class="top-bar-live">
+                <span class="live-dot"></span>
+                LIVE
+            </div>
+            <div class="top-bar-date">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span data-edit="topbar.date">{content['topbar.date']}</span>
+            </div>
+            <div class="top-bar-countdown" id="countdown">
+                <div class="cd-block"><span id="cdDays">00</span><small>d</small></div>
+                <div class="cd-sep">:</div>
+                <div class="cd-block"><span id="cdHours">00</span><small>u</small></div>
+                <div class="cd-sep">:</div>
+                <div class="cd-block"><span id="cdMins">00</span><small>m</small></div>
+                <div class="cd-sep">:</div>
+                <div class="cd-block"><span id="cdSecs">00</span><small>s</small></div>
+            </div>
+            <div class="top-bar-demand">
+                <span class="demand-icon">&#128293;</span>
+                <span data-edit="topbar.demand">{content['topbar.demand']}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="container hero-content">
+            <div class="free-badge animate-in">
+                <span class="free-badge-dot"></span>
+                <span data-edit="hero.badge">{content['hero.badge']}</span>
+            </div>
+            <h1 class="hero-title animate-in" data-delay="1">
+                <span data-edit="hero.title.before">{content['hero.title.before']}</span><br>
+                <span class="hero-accent" data-edit="hero.title.accent">{content['hero.title.accent']}</span>
+            </h1>
+            <p class="hero-sub animate-in" data-delay="2">
+                <span data-edit="hero.subtitle.line1">{content['hero.subtitle.line1']}</span><br>
+                <span data-edit="hero.subtitle.line2">{content['hero.subtitle.line2']}</span>
+            </p>
+            <div class="hero-cal animate-in" data-delay="3">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span data-edit="hero.date">{content['hero.date']}</span>
+            </div>
+            <a href="#aanmelden" class="btn btn-primary btn-shimmer animate-in" data-delay="4" data-flow-cta="hero-aanmelden">
+                <span data-edit="hero.cta">{content['hero.cta']}</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <p class="hero-note animate-in" data-delay="5" data-edit="hero.note">{content['hero.note']}</p>
+        </div>
+    </section>
+
+    <!-- Video + CTA -->
+    <section class="section section-video" id="video">
+        <div class="container">
+            <p class="pre-label" data-edit="video.label">{content['video.label']}</p>
+            <div class="flow-player animate-in" data-video={content['video.id']}></div>
+            <div class="cta-bar animate-in">
+                <a href="#aanmelden" class="btn btn-primary btn-shimmer" data-flow-cta="video-aanmelden">
+                    <span data-edit="video.cta">{content['video.cta']}</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+                <span class="cta-sub" data-edit="video.cta.sub">{content['video.cta.sub']}</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Editorial -->
+    <section class="section section-editorial">
+        <div class="container">
+            <p class="pre-label animate-in" data-edit="editorial.label">{content['editorial.label']}</p>
+            <h2 class="section-title animate-in">
+                <span data-edit="editorial.title.before">{content['editorial.title.before']}</span>
+                <span class="text-gold" data-edit="editorial.title.accent">{content['editorial.title.accent']}</span>
+            </h2>
+            <div class="editorial-body animate-in">
+                <p data-edit="editorial.p1">{content['editorial.p1']}</p>
+                <p>
+                    <span data-edit="editorial.p2.before">{content['editorial.p2.before']}</span>
+                    <strong data-edit="editorial.p2.strong">{content['editorial.p2.strong']}</strong>
+                </p>
+                <p>
+                    <span data-edit="editorial.p3.before">{content['editorial.p3.before']}</span>
+                    <strong data-edit="editorial.p3.strong">{content['editorial.p3.strong']}</strong>
+                </p>
+                <p data-edit="editorial.p4">{content['editorial.p4']}</p>
+            </div>
+            <div class="cta-bar animate-in">
+                <a href="#aanmelden" class="btn btn-primary btn-shimmer" data-flow-cta="editorial-aanmelden">
+                    <span data-edit="editorial.cta">{content['editorial.cta']}</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+                <span class="cta-sub" data-edit="editorial.cta.sub">{content['editorial.cta.sub']}</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Discoveries -->
+    <section class="section section-discoveries">
+        <div class="container">
+            <p class="pre-label animate-in" data-edit="discoveries.label">{content['discoveries.label']}</p>
+            <h2 class="section-title animate-in" data-edit="discoveries.title">{content['discoveries.title']}</h2>
+            <div class="discovery-list">
+                {[1,2,3,4,5].map((i) => (
+                    <div class="discovery-card animate-in">
+                        <div class="discovery-num">{String(i).padStart(2,'0')}</div>
+                        <div class="discovery-content">
+                            <h3 data-edit={`discoveries.d${i}.title`}>{content[`discoveries.d${i}.title` as keyof typeof content]}</h3>
+                            <p data-edit={`discoveries.d${i}.text`}>{content[`discoveries.d${i}.text` as keyof typeof content]}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+            <div class="cta-bar animate-in">
+                <a href="#aanmelden" class="btn btn-primary btn-shimmer" data-flow-cta="discoveries-aanmelden">
+                    <span data-edit="discoveries.cta">{content['discoveries.cta']}</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+                <span class="cta-sub" data-edit="discoveries.cta.sub">{content['discoveries.cta.sub']}</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Audience (Two People) -->
+    <section class="section section-audience">
+        <div class="container">
+            <p class="pre-label animate-in" data-edit="audience.label">{content['audience.label']}</p>
+            <h2 class="section-title animate-in" data-edit="audience.title">{content['audience.title']}</h2>
+            <div class="audience-grid">
+                <div class="audience-card animate-in" data-delay="1">
+                    <div class="audience-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                    </div>
+                    <h3 data-edit="audience.card1.title">{content['audience.card1.title']}</h3>
+                    <p data-edit="audience.card1.text">{content['audience.card1.text']}</p>
+                </div>
+                <div class="audience-card animate-in" data-delay="2">
+                    <div class="audience-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </div>
+                    <h3 data-edit="audience.card2.title">{content['audience.card2.title']}</h3>
+                    <p data-edit="audience.card2.text">{content['audience.card2.text']}</p>
+                </div>
+            </div>
+            <p class="audience-footer animate-in" data-edit="audience.footer">{content['audience.footer']}</p>
+        </div>
+    </section>
+
+    <!-- Included -->
+    <section class="section section-included">
+        <div class="container">
+            <p class="pre-label animate-in" data-edit="included.label">{content['included.label']}</p>
+            <h2 class="section-title animate-in" data-edit="included.title">{content['included.title']}</h2>
+            <div class="included-grid">
+                <div class="included-card animate-in">
+                    <div class="included-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                    </div>
+                    <h3 data-edit="included.1.title">{content['included.1.title']}</h3>
+                    <p data-edit="included.1.text">{content['included.1.text']}</p>
+                </div>
+                <div class="included-card animate-in">
+                    <div class="included-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                    </div>
+                    <h3 data-edit="included.2.title">{content['included.2.title']}</h3>
+                    <p data-edit="included.2.text">{content['included.2.text']}</p>
+                </div>
+                <div class="included-card animate-in">
+                    <div class="included-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    </div>
+                    <h3 data-edit="included.3.title">{content['included.3.title']}</h3>
+                    <p data-edit="included.3.text">{content['included.3.text']}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Host -->
+    <section class="section section-host">
+        <div class="container">
+            <p class="pre-label animate-in" data-edit="host.label">{content['host.label']}</p>
+            <h2 class="section-title animate-in" data-edit="host.title">{content['host.title']}</h2>
+            <div class="host-layout">
+                <div class="host-stats animate-in">
+                    {[1,2,3].map((i) => (
+                        <div class="host-stat">
+                            <span class="host-stat-num" data-edit={`host.stat${i}.number`}>{content[`host.stat${i}.number` as keyof typeof content]}</span>
+                            <span class="host-stat-label" data-edit={`host.stat${i}.label`}>{content[`host.stat${i}.label` as keyof typeof content]}</span>
+                        </div>
+                    ))}
+                </div>
+                <div class="host-bio animate-in">
+                    <h3 data-edit="host.name">{content['host.name']}</h3>
+                    <div class="host-credentials">
+                        {[1,2,3,4].map((i) => (
+                            <p>
+                                <strong data-edit={`host.cred${i}.strong`}>{content[`host.cred${i}.strong` as keyof typeof content]}</strong>
+                                <span data-edit={`host.cred${i}.text`}> {content[`host.cred${i}.text` as keyof typeof content]}</span>
+                            </p>
+                        ))}
+                    </div>
+                    <p class="host-closing" data-edit="host.closing">{content['host.closing']}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROI -->
+    <section class="section section-roi">
+        <div class="container">
+            <p class="pre-label animate-in" data-edit="roi.label">{content['roi.label']}</p>
+            <h2 class="section-title animate-in">
+                <span data-edit="roi.title.before">{content['roi.title.before']}</span>
+                <span class="text-gold" data-edit="roi.title.accent">{content['roi.title.accent']}</span>
+                <span data-edit="roi.title.after">{content['roi.title.after']}</span>
+            </h2>
+            <p class="roi-intro animate-in" data-edit="roi.intro">{content['roi.intro']}</p>
+            <div class="roi-container animate-in">
+                <div class="roi-box roi-before">
+                    <div class="roi-label" data-edit="roi.before.label">{content['roi.before.label']}</div>
+                    <div class="roi-items">
+                        {[1,2,3].map((i) => (
+                            <div class="roi-item">
+                                <span class="roi-val roi-val-muted" data-edit={`roi.before.stat${i}.number`}>{content[`roi.before.stat${i}.number` as keyof typeof content]}</span>
+                                <span class="roi-desc" data-edit={`roi.before.stat${i}.desc`}>{content[`roi.before.stat${i}.desc` as keyof typeof content]}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div class="roi-arrow">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+                <div class="roi-box roi-after">
+                    <div class="roi-label" data-edit="roi.after.label">{content['roi.after.label']}</div>
+                    <div class="roi-items">
+                        {[1,2,3].map((i) => (
+                            <div class="roi-item">
+                                <span class="roi-val roi-val-gold" data-edit={`roi.after.stat${i}.number`}>{content[`roi.after.stat${i}.number` as keyof typeof content]}</span>
+                                <span class="roi-desc" data-edit={`roi.after.stat${i}.desc`}>{content[`roi.after.stat${i}.desc` as keyof typeof content]}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+            <p class="roi-question animate-in" data-edit="roi.question">{content['roi.question']}</p>
+        </div>
+    </section>
+
+    <!-- Registration -->
+    <section class="section section-register" id="aanmelden">
+        <div class="container">
+            <h2 class="section-title animate-in">
+                <span data-edit="register.title.line1">{content['register.title.line1']}</span><br>
+                <span class="text-gold" data-edit="register.title.accent">{content['register.title.accent']}</span>
+            </h2>
+            <p class="register-sub animate-in" data-edit="register.sub">{content['register.sub']}</p>
+
+            <div class="ticket animate-in">
+                <div class="ticket-strip">
+                    <span class="ticket-admit" data-edit="ticket.admit">{content['ticket.admit']}</span>
+                    <span class="ticket-access"><span class="ticket-access-dot"></span> <span data-edit="ticket.access">{content['ticket.access']}</span></span>
+                </div>
+                <div class="ticket-body">
+                    <div class="ticket-info">
+                        <h3 data-edit="ticket.info.title">{content['ticket.info.title']}</h3>
+                        <p data-edit="ticket.info.subtitle">{content['ticket.info.subtitle']}</p>
+                        <ul class="ticket-includes">
+                            {[1,2,3].map((i) => (
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                    <span data-edit={`ticket.include${i}`}>{content[`ticket.include${i}` as keyof typeof content]}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    <form class="ticket-form" id="signup-form" data-flow-form="doorbraakexclusive-aanmelding">
+                        <div class="form-group">
+                            <input type="text" id="naam" name="naam" placeholder={content['ticket.form.name']} required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" placeholder={content['ticket.form.email']} required>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" id="telefoon" name="telefoon" placeholder={content['ticket.form.phone']}>
+                        </div>
+                        <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off">
+                        <button type="submit" class="btn btn-primary btn-shimmer btn-full">
+                            <span data-edit="ticket.form.button">{content['ticket.form.button']}</span>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </button>
+                        <p class="form-privacy" data-edit="ticket.form.privacy">{content['ticket.form.privacy']}</p>
+                    </form>
+                </div>
+            </div>
+
+            <div class="ticket-success" id="formSuccess" style="display:none">
+                <div class="success-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <h3 data-edit="success.title">{content['success.title']}</h3>
+                <p data-edit="success.text">{content['success.text']}</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <p data-edit="footer.copy">{content['footer.copy']}</p>
+        </div>
+    </footer>
+
+    <script slot="scripts" is:inline src="/js/doorbraakexclusive.js"></script>
+</Base>
