@@ -149,6 +149,7 @@ try {
     $funnelViews = $totalViews;
     $funnelScroll50 = db()->query("SELECT COUNT(DISTINCT visitor_id) FROM tracking_scroll WHERE depth >= 50 AND $periodSql $filterSql")->fetchColumn();
     $funnelVideoPlay = db()->query("SELECT COUNT(DISTINCT visitor_id) FROM tracking_video WHERE event = 'play' AND $periodSql $filterSql")->fetchColumn();
+    $funnelVideoHalf = db()->query("SELECT COUNT(DISTINCT visitor_id) FROM tracking_video WHERE duration > 0 AND seconds_watched * 2 >= duration AND $periodSql $filterSql")->fetchColumn();
     $funnelCta = $totalConversions;
     $funnelForm = $totalForms;
 
@@ -263,7 +264,7 @@ try {
     $dailyViews = []; $topPages = []; $totalViews = 0; $totalConversions = 0; $totalForms = 0;
     $conversionRate = 0; $ctaRate = 0; $scrollByDepth = []; $scrollTotal = 1; $timeData = []; $avgTime = 0;
     $referrerData = []; $referrerTotal = 1; $campaigns = []; $deviceData = []; $deviceTotal = 1;
-    $funnelViews = 0; $funnelScroll50 = 0; $funnelVideoPlay = 0; $funnelCta = 0; $funnelForm = 0; $ctaData = [];
+    $funnelViews = 0; $funnelScroll50 = 0; $funnelVideoPlay = 0; $funnelVideoHalf = 0; $funnelCta = 0; $funnelForm = 0; $ctaData = [];
     $videoPlays = 0; $videoCompletes = 0; $videoAvgWatch = 0; $videoCompletionRate = 0; $videoProgress = [];
     $formStarts = 0; $formAbandons = 0; $formAbandonRate = 0; $abandonedForms = [];
     $browserCounts = []; $osCounts = []; $uaDeviceCounts = []; $browserTotal = 1; $osTotal = 1;
@@ -355,7 +356,8 @@ try {
             $funnelSteps = [
                 ['label' => 'Pageviews', 'value' => $funnelViews, 'color' => 'var(--os-accent)'],
                 ['label' => 'Scroll 50%+', 'value' => $funnelScroll50, 'color' => '#7cb5ec'],
-                ['label' => 'Video play', 'value' => $funnelVideoPlay, 'color' => '#e44d4d'],
+                ['label' => 'Video play', 'value' => $funnelVideoPlay, 'color' => '#FF6240'],
+                ['label' => 'Video 50%+ bekeken', 'value' => $funnelVideoHalf, 'color' => '#E8A53D'],
                 ['label' => 'CTA click', 'value' => $funnelCta, 'color' => '#90ed7d'],
                 ['label' => 'Form gestart', 'value' => $formStarts, 'color' => '#f7a35c'],
                 ['label' => 'Formulier verstuurd', 'value' => $funnelForm, 'color' => '#8085e9'],

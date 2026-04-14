@@ -21,11 +21,13 @@ try {
     // Gem. tijd vandaag
     $avgTime = db()->query("SELECT AVG(seconds) FROM tracking_time WHERE DATE(created_at) = CURDATE()")->fetchColumn();
 
-    // Mini-funnel (vandaag)
-    $fViews = $stats['pageviews_today'];
-    $fScroll = db()->query("SELECT COUNT(DISTINCT visitor_id) FROM tracking_scroll WHERE depth >= 50 AND DATE(created_at) = CURDATE()")->fetchColumn();
-    $fCta = $stats['conversions_today'];
-    $fForm = $stats['forms_today'];
+    // Mini-funnel (vandaag) — visitors per stap (uniek)
+    $fViews = (int) db()->query("SELECT COUNT(DISTINCT visitor_id) FROM tracking_pageviews WHERE DATE(created_at) = CURDATE()")->fetchColumn();
+    $fScroll = (int) db()->query("SELECT COUNT(DISTINCT visitor_id) FROM tracking_scroll WHERE depth >= 50 AND DATE(created_at) = CURDATE()")->fetchColumn();
+    $fVideoPlay = (int) db()->query("SELECT COUNT(DISTINCT visitor_id) FROM tracking_video WHERE event = 'play' AND DATE(created_at) = CURDATE()")->fetchColumn();
+    $fVideoHalf = (int) db()->query("SELECT COUNT(DISTINCT visitor_id) FROM tracking_video WHERE duration > 0 AND seconds_watched * 2 >= duration AND DATE(created_at) = CURDATE()")->fetchColumn();
+    $fCta = (int) db()->query("SELECT COUNT(DISTINCT visitor_id) FROM tracking_conversions WHERE DATE(created_at) = CURDATE()")->fetchColumn();
+    $fForm = (int) db()->query("SELECT COUNT(DISTINCT visitor_id) FROM tracking_forms WHERE DATE(created_at) = CURDATE()")->fetchColumn();
 
     // Sparklines (laatste 7 dagen per metric, gevuld zodat gaten 0 worden)
     $fillDays = function(array $rows) {
@@ -69,7 +71,7 @@ try {
 } catch (PDOException $e) {
     $stats = ['pageviews_today' => 0, 'conversions_today' => 0, 'forms_today' => 0, 'total_clients' => 0];
     $viewsTrend = 0; $avgScroll = 0; $avgTime = 0;
-    $fViews = 0; $fScroll = 0; $fCta = 0; $fForm = 0;
+    $fViews = 0; $fScroll = 0; $fVideoPlay = 0; $fVideoHalf = 0; $fCta = 0; $fForm = 0;
     $sparkline = []; $sparkViews = []; $sparkCta = []; $sparkForms = []; $recentActivity = []; $recentForms = [];
 }
 
@@ -137,6 +139,8 @@ function spark(array $data, string $color = 'var(--os-accent)'): string {
             $funnelSteps = [
                 ['label' => 'Pageviews', 'value' => $fViews, 'fill' => '#C9A84C', 'fill2' => '#A8893A'],
                 ['label' => 'Scroll 50%+', 'value' => $fScroll, 'fill' => '#5B9FCC', 'fill2' => '#4A86AD'],
+                ['label' => 'Video play', 'value' => $fVideoPlay, 'fill' => '#FF6240', 'fill2' => '#D14E32'],
+                ['label' => 'Video 50%+ bekeken', 'value' => $fVideoHalf, 'fill' => '#E8A53D', 'fill2' => '#C28930'],
                 ['label' => 'CTA click', 'value' => $fCta, 'fill' => '#6AB06A', 'fill2' => '#569156'],
                 ['label' => 'Formulier', 'value' => $fForm, 'fill' => '#D4845C', 'fill2' => '#B8704D'],
             ];
