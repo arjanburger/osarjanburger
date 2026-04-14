@@ -94,6 +94,22 @@ try {
     $formData->execute($visitorIds);
     $forms = $formData->fetchAll();
 
+    // Per-lead funnel: heeft deze lead elke stap bereikt? Plus eerste timestamp per stap.
+    $stepFirstAt = function(string $sql) use ($visitorIds, $placeholders) {
+        $s = db()->prepare($sql);
+        $s->execute($visitorIds);
+        return $s->fetchColumn() ?: null;
+    };
+    $stepReached = [
+        'pageview'   => $stepFirstAt("SELECT MIN(created_at) FROM tracking_pageviews WHERE visitor_id IN ($placeholders)"),
+        'scroll50'   => $stepFirstAt("SELECT MIN(created_at) FROM tracking_scroll WHERE visitor_id IN ($placeholders) AND depth >= 50"),
+        'video_play' => $stepFirstAt("SELECT MIN(created_at) FROM tracking_video WHERE visitor_id IN ($placeholders) AND event = 'play'"),
+        'video_half' => $stepFirstAt("SELECT MIN(created_at) FROM tracking_video WHERE visitor_id IN ($placeholders) AND duration > 0 AND seconds_watched * 2 >= duration"),
+        'cta'        => $stepFirstAt("SELECT MIN(created_at) FROM tracking_conversions WHERE visitor_id IN ($placeholders)"),
+        'form_start' => $stepFirstAt("SELECT MIN(created_at) FROM tracking_form_interactions WHERE visitor_id IN ($placeholders) AND event = 'start'"),
+        'form'       => $stepFirstAt("SELECT MIN(created_at) FROM tracking_forms WHERE visitor_id IN ($placeholders)"),
+    ];
+
     // Devices van deze klant (uit user_agent op pageviews)
     $deviceStmt = db()->prepare("
         SELECT user_agent, viewport, created_at FROM tracking_pageviews
@@ -200,6 +216,42 @@ $eventConfig = [
     </div>
 </div>
 <?php endif; ?>
+
+<!-- Funnel voortgang van deze lead -->
+<div class="os-panel">
+    <div class="os-panel-header"><h2>Funnel voortgang</h2></div>
+    <div class="os-panel-body">
+        <?php
+        $funnelLabels = [
+            'pageview'   => ['label' => 'Pageview', 'color' => 'var(--os-accent)'],
+            'scroll50'   => ['label' => 'Scroll 50%+', 'color' => '#7cb5ec'],
+            'video_play' => ['label' => 'Video play', 'color' => '#FF6240'],
+            'video_half' => ['label' => 'Video 50%+', 'color' => '#E8A53D'],
+            'cta'        => ['label' => 'CTA click', 'color' => '#90ed7d'],
+            'form_start' => ['label' => 'Form gestart', 'color' => '#f7a35c'],
+            'form'       => ['label' => 'Formulier verstuurd', 'color' => '#8085e9'],
+        ];
+        ?>
+        <div style="display:flex;gap:0;align-items:stretch;flex-wrap:wrap">
+            <?php foreach ($funnelLabels as $key => $cfg):
+                $reached = !empty($stepReached[$key]);
+                $when = $reached ? date('d M H:i', strtotime($stepReached[$key])) : null;
+                $bg = $reached ? $cfg['color'] : 'transparent';
+                $textColor = $reached ? '#0a0a0a' : 'var(--os-text-muted)';
+                $border = $reached ? $cfg['color'] : 'var(--os-border)';
+            ?>
+            <div style="flex:1;min-width:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0.85rem 0.6rem;background:<?= $bg ?>;color:<?= $textColor ?>;border:1px solid <?= $border ?>;border-right:none;font-family:var(--os-font-label);text-align:center" title="<?= $reached ? 'Bereikt op ' . $when : 'Nog niet bereikt' ?>">
+                <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;opacity:<?= $reached ? '1' : '0.6' ?>"><?= $cfg['label'] ?></div>
+                <div style="font-size:0.7rem;margin-top:0.25rem;opacity:0.75">
+                    <?php if ($reached): ?><?= $when ?><?php else: ?>—<?php endif; ?>
+                </div>
+                <?php if ($reached): ?><div style="font-size:1rem;margin-top:0.15rem">✓</div><?php endif; ?>
+            </div>
+            <?php endforeach; ?>
+            <div style="border-right:1px solid var(--os-border)"></div>
+        </div>
+    </div>
+</div>
 
 <div class="os-grid-2">
     <!-- Journey timeline -->
