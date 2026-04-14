@@ -34,13 +34,13 @@
     align-items: center;
     justify-content: center;
     gap: 12px;
-    background: rgba(0, 0, 0, 0.15);
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 45%);
     cursor: pointer;
     transition: all 0.4s ease-out;
 }
 
 .flow-player-overlay:hover {
-    background: rgba(0, 0, 0, 0.1);
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0) 45%);
 }
 
 .flow-player-overlay.hidden {
