@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--prefix", "/Users/arjanburger/Dev/flow-astro"],
       "port": 18102
+    },
+    {
+      "name": "os-local",
+      "runtimeExecutable": "php",
+      "runtimeArgs": ["-S", "127.0.0.1:18093", "-t", "/Users/arjanburger/Dev/ArjanBurgerOS", "/Users/arjanburger/Dev/ArjanBurgerOS/router.php"],
+      "port": 18093
     }
   ]
 }

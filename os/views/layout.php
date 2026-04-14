@@ -15,7 +15,7 @@ $p = defined('OS_URL_PREFIX') ? OS_URL_PREFIX : '';
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?= $p ?>/assets/css/os.css">
+    <link rel="stylesheet" href="<?= $p ?>/assets/css/os.css?v=<?= @filemtime(__DIR__ . '/../public/assets/css/os.css') ?: time() ?>">
 </head>
 <body>
     <div class="os-layout">

@@ -42,7 +42,12 @@ try {
     $sparkViews = $fillDays(db()->query("SELECT DATE(created_at) as date, COUNT(*) as n FROM tracking_pageviews WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) GROUP BY DATE(created_at)")->fetchAll());
     $sparkCta   = $fillDays(db()->query("SELECT DATE(created_at) as date, COUNT(*) as n FROM tracking_conversions WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) GROUP BY DATE(created_at)")->fetchAll());
     $sparkForms = $fillDays(db()->query("SELECT DATE(created_at) as date, COUNT(*) as n FROM tracking_forms WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) GROUP BY DATE(created_at)")->fetchAll());
-    $sparkline = $sparkViews; // backwards compat
+    // 7d chart op dashboard verwacht {date, views} objects
+    require_once dirname(__DIR__) . '/src/period.php';
+    $sparkline = osPadDailySeries(
+        db()->query("SELECT DATE(created_at) as date, COUNT(*) as views FROM tracking_pageviews WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) GROUP BY DATE(created_at)")->fetchAll(),
+        7
+    );
 
     // Recente activiteit (mix van alle event-types)
     $recentActivity = db()->query("
@@ -145,13 +150,13 @@ function spark(array $data, string $color = 'var(--os-accent)'): string {
                 ['label' => 'Formulier', 'value' => $fForm, 'fill' => '#D4845C', 'fill2' => '#B8704D'],
             ];
             $n = count($funnelSteps);
-            $svgW = 400;
-            $svgH = 300;
+            $svgW = 520;
+            $svgH = 90 * $n;   // 90px per tier ipv 50 → groter
             $tierH = $svgH / $n;
-            $topMin = 30;  // smalste punt (onderaan laatste tier)
+            // Eindigt in een echt punt: width(0)=svgW, width(n)=0
             $widths = [];
             for ($i = 0; $i <= $n; $i++) {
-                $widths[] = $svgW - (($svgW - $topMin) * ($i / $n));
+                $widths[] = $svgW * (1 - $i / $n);
             }
             ?>
             <svg class="os-funnel-svg" viewBox="0 0 <?= $svgW ?> <?= $svgH ?>" preserveAspectRatio="xMidYMid meet">
