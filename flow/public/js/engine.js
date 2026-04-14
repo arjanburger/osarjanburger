@@ -22,6 +22,32 @@
             : 'https://os.arjanburger.com/api');
     const DEBUG = SCRIPT_TAG?.hasAttribute('data-debug');
 
+    // ── Preview / no-track modus ─────────────────────────────
+    // Activeren via ?_track=0 in URL (vanuit OS dashboard "Bekijken" knop).
+    // Persisteert in localStorage zodat alle vervolgklikken in dezelfde sessie
+    // ook niets versturen. Uitzetten: ?_track=1 of localStorage wissen.
+    const NO_TRACK_KEY = 'flow_no_track';
+    try {
+        const tParam = new URLSearchParams(window.location.search).get('_track');
+        if (tParam === '0') localStorage.setItem(NO_TRACK_KEY, '1');
+        if (tParam === '1') localStorage.removeItem(NO_TRACK_KEY);
+    } catch (e) { /* private mode etc */ }
+    const NO_TRACK = (() => {
+        try { return localStorage.getItem(NO_TRACK_KEY) === '1'; } catch (e) { return false; }
+    })();
+
+    if (NO_TRACK) {
+        // Zichtbare badge zodat admin weet dat tracking uit staat
+        document.addEventListener('DOMContentLoaded', () => {
+            const b = document.createElement('div');
+            b.textContent = 'tracking off · preview';
+            b.style.cssText = 'position:fixed;bottom:12px;right:12px;background:#1a1a1a;color:#c8a55c;border:1px solid #c8a55c;padding:6px 12px;border-radius:6px;font:600 11px/1 -apple-system,sans-serif;letter-spacing:0.05em;text-transform:uppercase;z-index:99999;cursor:pointer;opacity:0.75';
+            b.title = 'Klik om tracking weer aan te zetten voor deze browser';
+            b.onclick = () => { try { localStorage.removeItem(NO_TRACK_KEY); } catch(e){} location.search = location.search.replace(/[?&]_track=0/, '') || '?_track=1'; };
+            document.body.appendChild(b);
+        });
+    }
+
     // ── Helpers ──────────────────────────────────────────────
     function log(...args) {
         if (DEBUG) console.log('[Flow]', ...args);
@@ -134,6 +160,10 @@
     }
 
     function sendToApi(endpoint, data) {
+        if (NO_TRACK) {
+            log('NO_TRACK skip', endpoint, data);
+            return;
+        }
         const payload = {
             page: PAGE_SLUG,
             visitor_id: generateVisitorId(),
