@@ -174,6 +174,8 @@ lsof -nP -iTCP:8093 -sTCP:LISTEN
 
 **Voor Claude verificatie via Preview MCP** (Chrome MCP blokkeert eigen-domein, Preview MCP wel oké op localhost): start de PHP dev-server via launch.json config `os-local` (`preview_start "os-local"`) → bereikbaar op `http://localhost:18093/os/dashboard`.
 
+**Infra details**: zie `/Users/arjanburger/Dev/infra/projects/arjanburger-os/`
+
 | URL lokaal | URL productie | Wat |
 |---|---|---|
 | `http://192.168.3.135:8093/os/login` | `https://os.arjanburger.com/login` | Dashboard |
