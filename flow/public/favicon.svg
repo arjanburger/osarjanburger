@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" fill="#0a0a0a"/>
+  <rect x="0" y="0" width="3" height="64" fill="#c9a84c"/>
+  <text x="36" y="32" text-anchor="middle" dominant-baseline="central"
+        font-family="Inter, Helvetica, Arial, sans-serif" font-weight="800"
+        font-size="22" letter-spacing="1" fill="#c9a84c">AB</text>
+</svg>
