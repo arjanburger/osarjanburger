@@ -25,19 +25,39 @@
 
     // ── Embed URL bouwen ────────────────────────────────────
     // Livid gebruikt Vimeo-compatibele parameters (true/false of 1/0).
+    // Alles wat de player rommelig maakt staat hier uit; alleen play/pause,
+    // progressbar en volume blijven over.
+    // LET OP: alle chrome-parameters hieronder werken alleen op een Pro-account.
+    var CHROME_OFF = {
+        title: 'false',          // titel-overlay bovenin
+        livid_logo: 'false',     // Livid-logo in de balk
+        custom_logo: 'false',
+        share: 'false',          // deel-knop
+        pip: 'false',            // picture-in-picture
+        airplay: 'false',
+        chromecast: 'false',
+        cc: 'false',             // ondertiteling-knop
+        speed: 'false',          // afspeelsnelheid
+        quality_selector: 'false',
+        fullscreen: 'false',
+        keyboard: 'false',
+        // Wél behouden:
+        progress_bar: 'true',
+        volume: 'true',
+    };
+
     function embedUrl(videoId, opts) {
         var params = {
             autoplay: opts.autoplay ? 'true' : 'false',
             muted: opts.muted ? 'true' : 'false',
             loop: 'true',
             controls: opts.controls ? 'true' : 'false',
-            title: 'false',
-            keyboard: 'false',
-            pip: 'false',
             playsinline: 'true',
             preload: 'auto',
             color: 'c8a55c',
         };
+        Object.keys(CHROME_OFF).forEach(function (k) { params[k] = CHROME_OFF[k]; });
+
         var qs = Object.keys(params).map(function (k) {
             return k + '=' + encodeURIComponent(params[k]);
         }).join('&');
